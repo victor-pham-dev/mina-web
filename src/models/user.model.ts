@@ -1,7 +1,21 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import timestamps from 'mongoose-timestamp';
+import { REGEX } from '../const/regexp';
 
-export interface IUser extends Document {
+export interface UserProps {
+  name: string;
+  facebookId?: string;
+  avatar?: string;
+  gender: string;
+  yOB: number;
+  status: number;
+  deleted: boolean;
+  password: string;
+  role: number;
+  email: string;
+}
+
+export interface UserModelProps extends Document {
   name: string;
   facebookId?: string;
   avatar?: string;
@@ -11,7 +25,7 @@ export interface IUser extends Document {
   deleted: boolean;
   password: string;
   role: string;
-  phone: string;
+  email: string;
 }
 
 const UserSchema: Schema = new mongoose.Schema({
@@ -36,7 +50,7 @@ const UserSchema: Schema = new mongoose.Schema({
     required: true,
   },
   status: {
-    type: String,
+    type: Number,
     required: true,
   },
   deleted: {
@@ -48,22 +62,22 @@ const UserSchema: Schema = new mongoose.Schema({
     required: true,
   },
   role: {
-    type: String,
+    type: Number,
     required: true,
   },
-  phone: {
+  email: {
     type: String,
     required: true,
     unique: true,
     validate: {
-      validator: function (value) {
-        return /^(0[3578]{1}[0-9]{8})$/.test(value);
+      validator: function (value: string) {
+        return REGEX.EMAIL.test(value);
       },
-      message: "Invalid phone number format",
+      message: "Invalid email format",
     },
   },
 });
 
 UserSchema.plugin(timestamps);
 
-export default mongoose.model<IUser>("users", UserSchema);
+export const UserModel =  mongoose.model<UserModelProps>("users", UserSchema);

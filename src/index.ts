@@ -1,12 +1,12 @@
 import dotenv from 'dotenv'
 dotenv.config()
-import express, { Router } from 'express'
-import cors from 'cors'
-import { database } from './models/model.index'
-import fs from 'fs'
-import bodyParser from 'body-parser'
-import { indexRoutes } from './routes/index.routes'
 
+import bodyParser from 'body-parser'
+import cors from 'cors'
+import express from 'express'
+import { database } from './models/model.index'
+import { CommonRoutes } from './routes/common.routes'
+import { userRoutes } from './routes/user.routes'
 
 const app = express()
 
@@ -14,6 +14,7 @@ app.use(cors())
 app.use(express.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
+console.log(database.url)
 //connect to db
 database.mongoose
   .connect(database.url, {
@@ -31,11 +32,14 @@ database.mongoose
 //
 
 //Router list
-indexRoutes(app)
+
+CommonRoutes(app)
+//user
+userRoutes(app)
+
 //
 
 const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`)
 })
-

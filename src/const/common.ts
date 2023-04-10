@@ -1,38 +1,37 @@
-export const KEY = {
-  ACCESS_TOKEN: process.env.ACCESS_TOKEN_KEY,
-  REFRESH_TOKEN: process.env.REFRESH_TOKEN,
+export const KEY =  {
+  ACCESS_TOKEN : process.env.ACCESS_TOKEN_KEY,
 }
 
-export const CODE = {
-  FAILED: 400,
-  AUTH_FAILED: 401,
-  TOKEN_REQUIRED: 403,
-  CREATED: 201,
-  OK: 200,
-  NOT_FOUND: 404,
-  INTERNAL: 500,
-  EXIST: 409,
+export enum CODE {
+  FAILED = 400,
+  AUTH_FAILED = 401,
+  TOKEN_REQUIRED = 403,
+  CREATED = 201,
+  OK = 200,
+  NOT_FOUND = 404,
+  INTERNAL = 500,
+  EXIST = 409,
 }
 
-export const MSG = {
-  CREATED: 'Created',
-  EXISTED: 'Existed',
-  UNKNOW: 'Unknow',
+export enum MSG {
+  CREATED = 'Created',
+  EXISTED = 'Existed',
+  UNKNOW = 'Unknow',
 }
 
-export const ROLE = {
-  ADMIN: 'admin',
-  STAFF: 'staff',
-  customer: 'customer',
+export enum ROLE {
+  SUPER_ADMIN = 0,
+  STAFF = 1,
+  USER = 2,
 }
 
-export const USER_STATUS = {
-  0: 'NOT_VERIFIED',
-  1: 'VERIFIED',
-  2: 'BANED',
+export enum USER_STATUS {
+  NOT_VERIFIED = 0,
+  VERIFIED = 1,
+  BANED = 2,
 }
 
-export const FILE = {
-  SIZE: 5 * 1024 * 1024,
-  ACCEPT: ['image/jpeg', 'image/png'],
+export const FILE =  {
+  SIZE : 5 * 1024 * 1024,
+  ACCEPT : ['image/jpeg', 'image/png'],
 }

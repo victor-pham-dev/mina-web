@@ -1,24 +1,24 @@
 db.createUser({
-  user: "minaroot",
-  pwd: "minarootpassword",
+  user: 'minaroot',
+  pwd: 'minarootpassword',
   roles: [
     {
-      role: "readWrite",
-      db: "minadb",
+      role: 'readWrite',
+      db: 'minadb',
     },
   ],
-});
+})
 
-db.createCollection("users");
+db.createCollection('users')
 db.users.insertMany([
   {
-    name: "John",
-    email: "john@example.com",
-    password: "123456",
+    name: 'Truong Pham Van',
+    gender: 'male',
+    yOB: 1999,
+    status: 1,
+    deleted: false,
+    password: '$2a$12$qpFqFDbie8.4YPg5/iS9Aubc.E4pZbBCByc82vDY7hHZNDPKxTl1G',
+    role: 0,
+    email: 'truongpham2412.nd@gmail.com',
   },
-  {
-    name: "Mary",
-    email: "mary@example.com",
-    password: "654321",
-  },
-]);
+])
