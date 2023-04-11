@@ -1,13 +1,14 @@
 import bcrypt from 'bcrypt'
 import { Response } from 'express'
 import jwt from 'jsonwebtoken'
-import { RequestCustoms } from 'src/helper/requestHanlder'
-import { UserProps } from 'src/models/user.model'
+import { RequestCustoms } from '../helper/requestHanlder'
+import { UserProps } from '../models/user.model'
 import { CODE, KEY, MSG, ROLE, USER_STATUS } from '../const/common'
 import { sendRes } from '../helper/response-handler'
 import { AuthRequestProps } from '../middleware/auth'
 import { database } from '../models/model.index'
 import { userValidator } from '../validator/user-validator'
+import { redisControl } from '../middleware/redis'
 
 const Users = database.users
 
@@ -29,7 +30,7 @@ const encrypter = async (str: string) => {
 
 export const Register = async (req: RequestCustoms<UserProps>, res: Response) => {
   try {
-    const { name, password, email, gender, yOB } = req.body  
+    const { name, password, email, gender, yOB } = req.body
     //validate body
     let bodyValid = userValidator.register(req.body)
     // console.log(bodyValid);
@@ -38,7 +39,7 @@ export const Register = async (req: RequestCustoms<UserProps>, res: Response) =>
         res: res,
         code: CODE.FAILED,
         msg: bodyValid.msg.toString(),
-        data: null
+        data: null,
       })
     }
     //check exist
@@ -48,7 +49,7 @@ export const Register = async (req: RequestCustoms<UserProps>, res: Response) =>
         res: res,
         code: CODE.EXIST,
         msg: MSG.EXISTED,
-        data: null
+        data: null,
       })
     }
     //hash password
@@ -69,15 +70,15 @@ export const Register = async (req: RequestCustoms<UserProps>, res: Response) =>
       return sendRes({
         res: res,
         code: CODE.CREATED,
-        msg: "OK",
-        data: null
+        msg: 'OK',
+        data: null,
       })
     } else {
       return sendRes({
         res: res,
         code: CODE.FAILED,
         msg: MSG.UNKNOW,
-        data: null
+        data: null,
       })
     }
   } catch (err) {
@@ -98,33 +99,38 @@ export const LoginWithAccount = async (req: RequestCustoms<LoginAccountProps>, r
       res: res,
       code: CODE.FAILED,
       msg: bodyValid.msg.toString(),
-      data: null
+      data: null,
     })
   }
   try {
-
     const user: UserProps = await Users.findOne({ email })
     const passwordValid = await bcrypt.compare(password, user.password)
 
     if (user && passwordValid) {
       const accessToken = await createAccessToken(email, user.role)
-      
-      return sendRes({
-        res: res,
-        code: CODE.OK,
-        msg: "OK",
-        data: { accessToken }
-      })
-
+      const replaceRedisResult = await redisControl.setRecord(email, accessToken)
+      if (replaceRedisResult.ok) {
+        return sendRes({
+          res: res,
+          code: CODE.OK,
+          msg: 'OK',
+          data: { accessToken },
+        })
+      } else {
+        return sendRes({
+          res: res,
+          code: CODE.INTERNAL,
+          msg: 'SERVER ERROR',
+          data: null,
+        })
+      }
     } else {
-
       return sendRes({
         res: res,
         code: CODE.FAILED,
-        msg: "Invalid email or password",
-        data: null
+        msg: 'Invalid email or password',
+        data: null,
       })
-
     }
   } catch (err) {
     throw new Error(`some thing wrong when login ${err}`)
@@ -140,17 +146,16 @@ export const Auth = async (req: AuthRequestProps, res: Response) => {
       return sendRes({
         res: res,
         code: CODE.OK,
-        msg: "OK",
-        data: user
+        msg: 'OK',
+        data: user,
       })
     } else {
       return sendRes({
         res: res,
         code: CODE.FAILED,
-        msg: "Invalid Token",
-        data: null
+        msg: 'Invalid Token',
+        data: null,
       })
-      
     }
   } catch (error) {
     throw new Error(`get profile error ${error}`)
