@@ -1,8 +1,7 @@
-import { REGEX } from '../const/regexp';
-import { LoginAccountProps } from '../controller/user.controller';
-import { UserProps } from './../models/user.model';
-import { ResultProps } from './types';
-
+import { REGEX } from '../const/regexp'
+import { LoginAccountProps } from '../controller/user.controller'
+import { UserProps } from '../models/user.model'
+import { ResultProps } from './types'
 
 const userValidator = {
   register: function (body: UserProps): ResultProps {
@@ -22,7 +21,7 @@ const userValidator = {
     }
     return { valid, msg }
   },
-//login with account
+  //login with account
   loginWithAccount: function (body: LoginAccountProps): ResultProps {
     let valid = true
     let msg: string[] = []
@@ -32,7 +31,7 @@ const userValidator = {
       msg.push('Email')
     }
 
-    if (!body.password || body.password?.trim().length < 6 ) {
+    if (!body.password || body.password?.trim().length < 6) {
       valid = false
       msg.push('Password')
     }
@@ -40,5 +39,4 @@ const userValidator = {
   },
 }
 
-export { userValidator };
-
+export { userValidator }
