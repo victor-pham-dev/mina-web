@@ -1,12 +1,12 @@
-// import { Express, Router } from 'express'
-// import { commonAuth } from "src/middleware/auth"
-// import {} from '../controller/user.'
-//  (app: Express) => {
-//   const users = require('../controller/user.controller')
-//   var router = Router()
-//   router.post('/register', users.Register)
-//   router.post('/login', users.Login)
-//   router.get('/auth', commonAuth, users.Auth)
+import { Express, Router } from 'express'
+import { commonAuth } from '../middleware/auth'
+import { Register, LoginWithAccount, Auth } from '../controller/user.controller'
 
-//   app.use('/api/user', router)
-// }
+export const userRoutes = (app: Express) => {
+  const router = Router()
+  router.post('/', Register)
+  router.post('/login/account', LoginWithAccount)
+  router.get('/auth', commonAuth, Auth)
+
+  app.use('/api/user', router)
+}

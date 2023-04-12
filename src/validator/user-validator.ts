@@ -1,52 +1,44 @@
-import { ROLE } from 'src/const/common'
-import { REGEX } from 'src/const/regexp'
+import { REGEX } from '../const/regexp';
+import { LoginAccountProps } from '../controller/user.controller';
+import { UserProps } from './../models/user.model';
+import { ResultProps } from './types';
+
 
 const userValidator = {
-  register: function (body: any) {
+  register: function (body: UserProps): ResultProps {
     let valid = true
-    let msg = []
+    let msg: string[] = []
     if (!body.name || body.name?.trim().length === 0) {
       valid = false
-      msg.push('Tên không hợp lệ')
+      msg.push('Name')
     }
-    if (!body.phone || body.phone?.trim().length === 0) {
+    if (!body.email || body.email.trim().length === 0 || !REGEX.EMAIL.test(body.email)) {
       valid = false
-      msg.push('Số điện thoại không hợp lệ')
+      msg.push('Email')
     }
-    if (!body.role || body.role?.trim().length === 0) {
+    if (!body.password || body.password.trim().length < 6) {
       valid = false
-      msg.push('Quyền không hợp lệ')
-    }
-    if (!body.password || body.password.trim().length < 6 || !REGEX.PASSWORD.test(body.password)) {
-      valid = false
-      msg.push('Mật khẩu')
-    }
-    if (body.phone && !REGEX.PHONE.test(body.phone)) {
-      valid = false
-      msg.push('Số điện thoại')
-    }
-    if (body.role === ROLE.ADMIN && body.phone !== '0343241299') {
-      valid = false
-      msg.push('Sai đối tượng')
+      msg.push('Password')
     }
     return { valid, msg }
   },
-
-  login: function (body: any) {
+//login with account
+  loginWithAccount: function (body: LoginAccountProps): ResultProps {
     let valid = true
-    let msg = []
+    let msg: string[] = []
 
-    if (!body.phone || body.phone?.trim().length === 0 || !REGEX.PHONE.test(body.phone)) {
+    if (!body.email || body.email?.trim().length === 0 || !REGEX.EMAIL.test(body.email)) {
       valid = false
-      msg.push('Số điện thoại')
+      msg.push('Email')
     }
 
-    if (!body.password || body.password?.trim().length < 6 || !REGEX.PASSWORD.test(body.password)) {
+    if (!body.password || body.password?.trim().length < 6 ) {
       valid = false
-      msg.push('Mật khẩu')
+      msg.push('Password')
     }
     return { valid, msg }
   },
 }
 
-export {  userValidator }
+export { userValidator };
+

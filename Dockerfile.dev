@@ -1,0 +1,19 @@
+
+FROM node:18
+WORKDIR /usr/src/app
+COPY package*.json ./
+RUN npm install
+RUN apt update -y
+
+RUN apt install lsb-release -y
+RUN curl -fsSL https://packages.redis.io/gpg | gpg --dearmor -o /usr/share/keyrings/redis-archive-keyring.gpg
+RUN echo "deb [signed-by=/usr/share/keyrings/redis-archive-keyring.gpg] https://packages.redis.io/deb $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/redis.list
+RUN apt-get update
+RUN apt-get install redis -y
+RUN redis-server &
+
+COPY . .
+EXPOSE 8888
+
+
+CMD ["npm", "run", "start:dev"]

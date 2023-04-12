@@ -11,6 +11,9 @@
 #3 run app
 <code>docker compse up </code>
 
+For view data on container run this command on mongodb container
+<code>apt-get update && apt-get install -y mongodb-clients</code>
+
 <h3 style="color: red">
 Please read package.json script to run app format code
 </h3>
