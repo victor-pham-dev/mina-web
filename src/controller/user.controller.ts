@@ -7,13 +7,13 @@ import { CODE, KEY, MSG, ROLE, USER_STATUS } from '../const/common'
 import { sendRes } from '../helper/response-handler'
 import { AuthRequestProps } from '../middleware/auth'
 import { database } from '../models/model.index'
-import { userValidator } from '../validator/user-validator'
+import { userValidator } from '../validator/user.validator'
 import { redisControl } from '../middleware/redis'
 
 const Users = database.users
 
 // function: create accessToken
-const createAccessToken = async (email: string, role: number) => {
+async function createAccessToken(email: string, role: number) {
   const token = jwt.sign({ email: email, role: role }, KEY.ACCESS_TOKEN, {
     expiresIn: '7d',
   })
@@ -22,13 +22,13 @@ const createAccessToken = async (email: string, role: number) => {
 //
 
 //function encrypt password
-const encrypter = async (str: string) => {
+async function encrypter(str: string) {
   const encryptedStr = await bcrypt.hash(str, 10)
   return encryptedStr
 }
 //
 
-export const Register = async (req: RequestCustoms<UserProps>, res: Response) => {
+async function Register(req: RequestCustoms<UserProps>, res: Response) {
   try {
     const { name, password, email, gender, yOB } = req.body
     //validate body
@@ -91,7 +91,7 @@ export interface LoginAccountProps {
   email: string
   password: string
 }
-export const LoginWithAccount = async (req: RequestCustoms<LoginAccountProps>, res: Response) => {
+async function LoginWithAccount(req: RequestCustoms<LoginAccountProps>, res: Response) {
   const { email, password } = req.body
   let bodyValid = userValidator.loginWithAccount(req.body)
   if (!bodyValid.valid) {
@@ -139,7 +139,7 @@ export const LoginWithAccount = async (req: RequestCustoms<LoginAccountProps>, r
 
 //authen check token and get profile
 
-export const Auth = async (req: AuthRequestProps, res: Response) => {
+async function Auth(req: AuthRequestProps, res: Response) {
   try {
     const user = await Users.findOne({ email: req.user.email }, { password: 0 })
     if (user) {
@@ -160,4 +160,10 @@ export const Auth = async (req: AuthRequestProps, res: Response) => {
   } catch (error) {
     throw new Error(`get profile error ${error}`)
   }
+}
+
+export const UserController = {
+  Register,
+  LoginWithAccount,
+  Auth,
 }

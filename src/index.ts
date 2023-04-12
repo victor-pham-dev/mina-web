@@ -7,6 +7,8 @@ import express from 'express'
 import { database } from './models/model.index'
 import { CommonRoutes } from './routes/common.routes'
 import { userRoutes } from './routes/user.routes'
+import { RegisClassRoutes } from './routes/regis-class.routes'
+import { ClassRoutes } from './routes/class.routes'
 
 const app = express()
 
@@ -33,8 +35,9 @@ database.mongoose
 //Router list
 
 CommonRoutes(app)
-//user
 userRoutes(app)
+ClassRoutes(app)
+RegisClassRoutes(app)
 
 //
 

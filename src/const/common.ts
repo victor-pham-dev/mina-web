@@ -1,5 +1,5 @@
-export const KEY =  {
-  ACCESS_TOKEN : process.env.ACCESS_TOKEN_KEY,
+export const KEY = {
+  ACCESS_TOKEN: process.env.ACCESS_TOKEN_KEY,
 }
 
 export enum CODE {
@@ -17,6 +17,10 @@ export enum MSG {
   CREATED = 'Created',
   EXISTED = 'Existed',
   UNKNOW = 'Unknow',
+  UPDATED = 'Updated',
+  DELETED = 'Deleted',
+  NOT_FOUND = 'Resource not found',
+  INVALID = 'Invalid resource',
 }
 
 export enum ROLE {
@@ -31,7 +35,33 @@ export enum USER_STATUS {
   BANED = 2,
 }
 
-export const FILE =  {
-  SIZE : 5 * 1024 * 1024,
-  ACCEPT : ['image/jpeg', 'image/png'],
+export const FILE = {
+  SIZE: 5 * 1024 * 1024,
+  ACCEPT: ['image/jpeg', 'image/png'],
+}
+
+export enum LEARN_METHOD {
+  ONLINE = 0,
+  OFFLINE = 1,
+}
+
+export enum REGIS_STATUS {
+  INIT = 0,
+  CHECKED = 1,
+  CONFIRMED = 2,
+  CANCELED = 3,
+}
+
+export enum CLASS_LEVEL {
+  N1 = 'N1',
+  N2 = 'N2',
+  N3 = 'N3',
+  N4 = 'N4',
+  N5 = 'N5',
+}
+
+export enum CLASS_STATUS {
+  OPEN = 0, //for recruit student
+  PROCESSING = 1, //class is started
+  END = 2, // class ended
 }

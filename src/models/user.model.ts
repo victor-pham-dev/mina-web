@@ -16,19 +16,6 @@ export interface UserProps {
   email: string
 }
 
-export interface UserModelProps extends Document {
-  name: string
-  facebookId?: string
-  avatar?: string
-  gender: string
-  yOB: number
-  status: string
-  deleted: boolean
-  password: string
-  role: string
-  email: string
-}
-
 const UserSchema: Schema = new mongoose.Schema({
   name: {
     type: String,
@@ -81,4 +68,4 @@ const UserSchema: Schema = new mongoose.Schema({
 
 UserSchema.plugin(timestamps)
 
-export const UserModel = mongoose.model<UserModelProps>('users', UserSchema)
+export const UserModel = mongoose.model<Document & UserProps>('users', UserSchema)
