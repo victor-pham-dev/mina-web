@@ -1,16 +1,14 @@
 import { Request, Response } from 'express'
 import { RequestCustoms } from '../helper/requestHanlder'
-import { CLASS_STATUS, CODE, MSG, REGIS_STATUS } from '../const/common'
+import { CODE, MSG } from '../const/common'
 import { sendRes } from '../helper/response-handler'
-
-import { RegisClassRepositories } from '../repositories/regis-class.repositories'
-import { ClassProps } from '../models/class.model'
-import { ClassValidator } from '../validator/class.validator'
-import { ClassRepositories } from '../repositories/class.repositories'
+import { PostProps } from '../models/post.model'
+import { PostValidator } from '../validator/post.validator'
+import { PostRepositories } from '../repositories/post.repositories'
 
 // create regis class info
-async function create(req: RequestCustoms<ClassProps>, res: Response) {
-  const bodyValid = ClassValidator.create(req.body)
+async function create(req: RequestCustoms<PostProps>, res: Response) {
+  const bodyValid = PostValidator.create(req.body)
   if (!bodyValid.valid) {
     return sendRes<null>({
       res,
@@ -20,10 +18,9 @@ async function create(req: RequestCustoms<ClassProps>, res: Response) {
     })
   }
   try {
-    const createResult = await ClassRepositories.create({
+    const createResult = await PostRepositories.create({
       ...req.body,
       deleted: false,
-      status: CLASS_STATUS.OPEN,
     })
     if (createResult.ok) {
       return sendRes<string>({
@@ -40,20 +37,47 @@ async function create(req: RequestCustoms<ClassProps>, res: Response) {
       data: null,
     })
   } catch (error) {
-    throw new Error(`class:create error ${error}`)
+    throw new Error(`post:create error ${error}`)
   }
 }
 
-// checking regis
-interface updateStatusProps {
-  _id: string
-  status: REGIS_STATUS.INIT | REGIS_STATUS.CHECKED | REGIS_STATUS.CONFIRMED | REGIS_STATUS.CANCELED
-}
-async function updateStatus(req: RequestCustoms<updateStatusProps>, res: Response) {
+//get a post
+async function getOne(req: Request, res: Response) {
+  const _id = req.params._id as string
+  if (!_id) {
+    return sendRes<null>({
+      res,
+      code: CODE.FAILED,
+      msg: MSG.NOT_FOUND,
+      data: null,
+    })
+  }
   try {
-    const regisData = await ClassRepositories.get(req.body._id)
-    if (regisData.ok) {
-      const updateResult = await ClassRepositories.put(req.body._id, 'status', req.body.status)
+    const findResult = await PostRepositories.get(_id)
+    if (findResult.ok) {
+      return sendRes<PostProps>({
+        res,
+        code: CODE.OK,
+        msg: MSG.OK,
+        data: findResult.data,
+      })
+    }
+    return sendRes<null>({
+      res,
+      code: CODE.NOT_FOUND,
+      msg: `Post NOT FOUND`,
+      data: null,
+    })
+  } catch (error) {
+    throw new Error(`post:change status error: ${error}`)
+  }
+}
+// checking regis
+async function update(req: RequestCustoms<PostProps>, res: Response) {
+  try {
+    const regisData = PostRepositories.get(req.body._id)
+    if (regisData) {
+      const updateResult = await PostRepositories.patch(req.body)
       if (updateResult) {
         return sendRes<null>({
           res,
@@ -73,11 +97,11 @@ async function updateStatus(req: RequestCustoms<updateStatusProps>, res: Respons
     return sendRes<null>({
       res,
       code: CODE.NOT_FOUND,
-      msg: `REGIS DATA NOT FOUND`,
+      msg: `Post NOT FOUND`,
       data: null,
     })
   } catch (error) {
-    throw new Error(`class:change status error: ${error}`)
+    throw new Error(`post:change status error: ${error}`)
   }
 }
 
@@ -85,9 +109,9 @@ async function updateStatus(req: RequestCustoms<updateStatusProps>, res: Respons
 async function markDelete(req: Request, res: Response) {
   const _id = req.params._id as string
   try {
-    const regisData = await RegisClassRepositories.get(_id)
+    const regisData = await PostRepositories.get(_id)
     if (regisData.ok) {
-      const updateResult = await ClassRepositories.put(_id, 'deleted', true)
+      const updateResult = await PostRepositories.put(_id, 'deleted', true)
       if (updateResult) {
         return sendRes<null>({
           res,
@@ -107,16 +131,17 @@ async function markDelete(req: Request, res: Response) {
     return sendRes<null>({
       res,
       code: CODE.NOT_FOUND,
-      msg: `REGIS DATA NOT FOUND`,
+      msg: `Post NOT FOUND`,
       data: null,
     })
   } catch (error) {
-    throw new Error(`class: delete error: ${error}`)
+    throw new Error(`post: delete error: ${error}`)
   }
 }
 
-export const ClassController = {
+export const PostController = {
   create,
-  updateStatus,
+  update,
   markDelete,
+  getOne,
 }

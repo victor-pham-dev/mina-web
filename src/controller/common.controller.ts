@@ -23,7 +23,7 @@ export const SendMail = async (req: RequestCustoms<SendMailProps>, res: Response
   }
   try {
     const result: any = await sendEmailService(req.body.to, req.body.subject, req.body.body)
-    if (result) {
+    if (result.ok) {
       return sendRes({
         res: res,
         code: CODE.OK,

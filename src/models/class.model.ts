@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document } from 'mongoose'
 import timestamps from 'mongoose-timestamp'
-import { CLASS_STATUS } from 'src/const/common'
+import { CLASS_STATUS } from '../const/common'
 
 export interface ClassProps {
   _id?: string

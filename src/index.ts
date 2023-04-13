@@ -9,6 +9,7 @@ import { CommonRoutes } from './routes/common.routes'
 import { userRoutes } from './routes/user.routes'
 import { RegisClassRoutes } from './routes/regis-class.routes'
 import { ClassRoutes } from './routes/class.routes'
+import { PostRoutes } from './routes/post.routes'
 
 const app = express()
 
@@ -38,7 +39,7 @@ CommonRoutes(app)
 userRoutes(app)
 ClassRoutes(app)
 RegisClassRoutes(app)
-
+PostRoutes(app)
 //
 
 const PORT = process.env.PORT

@@ -5,7 +5,7 @@ import { sendRes } from '../helper/response-handler'
 import { RegisClassProps } from '../models/regis-class.model'
 import { regisClassValidator } from '../validator/regis-class.validator'
 import { RegisClassRepositories } from '../repositories/regis-class.repositories'
-import { ClassRepositories } from 'src/repositories/class.repositories'
+import { ClassRepositories } from '../repositories/class.repositories'
 
 // create regis class info
 async function regis(req: RequestCustoms<RegisClassProps>, res: Response) {
@@ -34,7 +34,6 @@ async function regis(req: RequestCustoms<RegisClassProps>, res: Response) {
       deleted: false,
       status: REGIS_STATUS.INIT,
     })
-    console.log(REGIS_STATUS.INIT)
     if (createResult.ok) {
       return sendRes<string>({
         res,
@@ -61,8 +60,8 @@ interface updateStatusProps {
 }
 async function updateStatus(req: RequestCustoms<updateStatusProps>, res: Response) {
   try {
-    const regisData = RegisClassRepositories.get(req.body._id)
-    if (regisData) {
+    const regisData = await RegisClassRepositories.get(req.body._id)
+    if (regisData.ok) {
       const updateResult = await RegisClassRepositories.put(req.body._id, 'status', req.body.status)
       if (updateResult) {
         return sendRes<null>({
@@ -95,8 +94,8 @@ async function updateStatus(req: RequestCustoms<updateStatusProps>, res: Respons
 async function markDelete(req: Request, res: Response) {
   const _id = req.params._id as string
   try {
-    const regisData = RegisClassRepositories.get(_id)
-    if (regisData) {
+    const regisData = await RegisClassRepositories.get(_id)
+    if (regisData.ok) {
       const updateResult = await RegisClassRepositories.put(_id, 'deleted', true)
       if (updateResult) {
         return sendRes<null>({

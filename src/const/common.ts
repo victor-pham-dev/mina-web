@@ -21,6 +21,7 @@ export enum MSG {
   DELETED = 'Deleted',
   NOT_FOUND = 'Resource not found',
   INVALID = 'Invalid resource',
+  OK = 'ok',
 }
 
 export enum ROLE {

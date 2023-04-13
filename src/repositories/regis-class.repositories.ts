@@ -3,7 +3,7 @@ import { RegisClassProps } from '../models/regis-class.model'
 import { RepositoriesResultProps } from './types'
 
 const RegisClasses = database.regisclasses
-async function create(payload: RegisClassProps): Promise<RepositoriesResultProps<string>> {
+async function create(payload: RegisClassProps): Promise<RepositoriesResultProps<string | null>> {
   try {
     const result = await RegisClasses.create(payload)
     if (result) {
@@ -21,7 +21,7 @@ async function create(payload: RegisClassProps): Promise<RepositoriesResultProps
   }
 }
 
-async function get(_id: string): Promise<RepositoriesResultProps<RegisClassProps>> {
+async function get(_id: string): Promise<RepositoriesResultProps<RegisClassProps | null>> {
   try {
     const result = await RegisClasses.findById(_id)
     if (result) {

@@ -1,5 +1,5 @@
 import { Response } from 'express'
-import { CODE } from 'src/const/common'
+import { CODE } from '../const/common'
 
 export interface PagingDataProps {
   dataTable: any

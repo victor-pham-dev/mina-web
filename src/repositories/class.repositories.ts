@@ -3,7 +3,7 @@ import { ClassProps } from '../models/class.model'
 import { RepositoriesResultProps } from './types'
 
 const Classes = database.classes
-async function create(payload: ClassProps): Promise<RepositoriesResultProps<string>> {
+async function create(payload: ClassProps): Promise<RepositoriesResultProps<string | null>> {
   try {
     const result = await Classes.create(payload)
     if (result) {
@@ -21,7 +21,7 @@ async function create(payload: ClassProps): Promise<RepositoriesResultProps<stri
   }
 }
 
-async function get(_id: string): Promise<RepositoriesResultProps<ClassProps>> {
+async function get(_id: string): Promise<RepositoriesResultProps<ClassProps | null>> {
   try {
     const result = await Classes.findById(_id)
     if (result) {
