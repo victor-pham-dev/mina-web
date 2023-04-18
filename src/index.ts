@@ -1,4 +1,4 @@
-import dotenv from 'dotenv'
+import * as dotenv from 'dotenv'
 dotenv.config()
 import bodyParser from 'body-parser'
 import cors from 'cors'
@@ -42,6 +42,10 @@ ClassRoutes(app)
 RegisClassRoutes(app)
 PostRoutes(app)
 StudentRoutes(app)
+
+app.get('/', (req, res) => {
+  res.send('This is mina api')
+})
 //
 
 const PORT = process.env.PORT
