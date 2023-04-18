@@ -73,37 +73,30 @@ async function getOne(req: Request, res: Response) {
   }
 }
 // checking regis
-async function update(req: RequestCustoms<PostProps>, res: Response) {
-  try {
-    const regisData = PostRepositories.get(req.body._id)
-    if (regisData) {
-      const updateResult = await PostRepositories.patch(req.body)
-      if (updateResult) {
-        return sendRes<null>({
-          res,
-          code: CODE.OK,
-          msg: MSG.UPDATED,
-          data: null,
-        })
-      }
+// interface
+// async function update(req: RequestCustoms<PostProps>, res: Response) {
+//   try {
+//       const updateResult = await PostRepositories.patch(req.body.)
+//       if (updateResult) {
+//         return sendRes<null>({
+//           res,
+//           code: CODE.OK,
+//           msg: MSG.UPDATED,
+//           data: null,
+//         })
+//       }
 
-      return sendRes<null>({
-        res,
-        code: CODE.FAILED,
-        msg: MSG.NOT_FOUND,
-        data: null,
-      })
-    }
-    return sendRes<null>({
-      res,
-      code: CODE.NOT_FOUND,
-      msg: `Post NOT FOUND`,
-      data: null,
-    })
-  } catch (error) {
-    throw new Error(`post:change status error: ${error}`)
-  }
-}
+//       return sendRes<null>({
+//         res,
+//         code: CODE.FAILED,
+//         msg: MSG.NOT_FOUND,
+//         data: null,
+//       })
+
+//   } catch (error) {
+//     throw new Error(`post:change status error: ${error}`)
+//   }
+// }
 
 // change status
 async function markDelete(req: Request, res: Response) {
@@ -111,7 +104,7 @@ async function markDelete(req: Request, res: Response) {
   try {
     const regisData = await PostRepositories.get(_id)
     if (regisData.ok) {
-      const updateResult = await PostRepositories.put(_id, 'deleted', true)
+      const updateResult = await PostRepositories.patch(_id, { deleted: true })
       if (updateResult) {
         return sendRes<null>({
           res,
@@ -141,7 +134,7 @@ async function markDelete(req: Request, res: Response) {
 
 export const PostController = {
   create,
-  update,
+  // update,
   markDelete,
   getOne,
 }

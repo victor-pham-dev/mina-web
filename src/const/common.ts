@@ -22,6 +22,7 @@ export enum MSG {
   NOT_FOUND = 'Resource not found',
   INVALID = 'Invalid resource',
   OK = 'ok',
+  MISSING_PARAMS = 'missing params',
 }
 
 export enum ROLE {
@@ -59,6 +60,7 @@ export enum CLASS_LEVEL {
   N3 = 'N3',
   N4 = 'N4',
   N5 = 'N5',
+  N5B = 'N5B',
 }
 
 export enum CLASS_STATUS {

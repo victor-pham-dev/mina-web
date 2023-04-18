@@ -40,15 +40,11 @@ async function get(_id: string): Promise<RepositoriesResultProps<PostProps | nul
   }
 }
 
-async function put(
+async function patch(
   _id: string,
-  key: keyof ClassProps,
-  value: string | number | Boolean,
+  newValue: Partial<PostProps>,
 ): Promise<RepositoriesResultProps<null>> {
   try {
-    const newValue = {
-      [key]: value,
-    }
     const result = await Posts.findOneAndUpdate({ _id }, newValue)
     if (result) {
       return {
@@ -61,28 +57,7 @@ async function put(
       data: null,
     }
   } catch (error) {
-    throw new Error(`repositories-post:Put error: ${error}`)
-  }
-}
-
-async function patch(payload: PostProps): Promise<RepositoriesResultProps<null>> {
-  try {
-    const result = await Posts.findOneAndUpdate(
-      { _id: payload._id },
-      { title: payload.title, content: payload.content, type: payload.type },
-    )
-    if (result) {
-      return {
-        ok: true,
-        data: null,
-      }
-    }
-    return {
-      ok: false,
-      data: null,
-    }
-  } catch (error) {
-    throw new Error(`repositories-post:Put error: ${error}`)
+    throw new Error(`repositories-post:patch error: ${error}`)
   }
 }
 
@@ -90,5 +65,4 @@ export const PostRepositories = {
   create,
   patch,
   get,
-  put,
 }

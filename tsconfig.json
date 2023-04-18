@@ -4,10 +4,10 @@
     "esModuleInterop": true,
     "target": "es6",
     "moduleResolution": "node",
-    "outDir": "dist",
+    "outDir": "api",
     "baseUrl": ".",
     "sourceMap": false
   },
   "include": ["src/**/*"],
-  "exclude": ["dist"]
+  "exclude": ["api"]
 }

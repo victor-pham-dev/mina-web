@@ -13,13 +13,25 @@ function create(body: ClassProps): ResultProps {
     valid = false
     msg.push('Creator Id')
   }
-  if (!body.numberOfStudents || (body.numberOfStudents && body.numberOfStudents < 1)) {
+  if (!body.daysOfWeek) {
     valid = false
-    msg.push('Number of student')
+    msg.push('Day of week')
   }
   if (!body.startDate) {
     valid = false
-    msg.push('Start date')
+    msg.push('startDate')
+  }
+  if (!body.numberOfLessons) {
+    valid = false
+    msg.push('numberOfLessons')
+  }
+  if (!body.time) {
+    valid = false
+    msg.push('Time')
+  }
+  if (!body.description) {
+    valid = false
+    msg.push('Desciption')
   }
 
   return { valid, msg }

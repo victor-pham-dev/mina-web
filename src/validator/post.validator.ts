@@ -1,6 +1,5 @@
 // import { REGEX } from '../const/regexp'
 import { ResultProps } from './types'
-import { ClassProps } from '../models/class.model'
 import { PostProps } from '../models/post.model'
 
 function create(body: PostProps): ResultProps {

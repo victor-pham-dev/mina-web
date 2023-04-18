@@ -1,10 +1,13 @@
 import { Request, Response } from 'express'
 import { RequestCustoms } from '../helper/requestHanlder'
 import { CLASS_STATUS, CODE, MSG, REGIS_STATUS } from '../const/common'
-import { sendRes } from '../helper/response-handler'
+import { PagingDataProps, sendRes } from '../helper/response-handler'
 import { RegisClassProps } from '../models/regis-class.model'
 import { regisClassValidator } from '../validator/regis-class.validator'
-import { RegisClassRepositories } from '../repositories/regis-class.repositories'
+import {
+  RegisClassRepositories,
+  SearchRegisClassParamsProps,
+} from '../repositories/regis-class.repositories'
 import { ClassRepositories } from '../repositories/class.repositories'
 
 // create regis class info
@@ -59,10 +62,20 @@ interface updateStatusProps {
   status: REGIS_STATUS.INIT | REGIS_STATUS.CHECKED | REGIS_STATUS.CONFIRMED | REGIS_STATUS.CANCELED
 }
 async function updateStatus(req: RequestCustoms<updateStatusProps>, res: Response) {
+  if (!req.body._id || !req.body.status) {
+    return sendRes<null>({
+      res,
+      code: CODE.FAILED,
+      msg: MSG.MISSING_PARAMS,
+      data: null,
+    })
+  }
   try {
     const regisData = await RegisClassRepositories.get(req.body._id)
     if (regisData.ok) {
-      const updateResult = await RegisClassRepositories.put(req.body._id, 'status', req.body.status)
+      const updateResult = await RegisClassRepositories.patch(req.body._id, {
+        status: req.body.status,
+      })
       if (updateResult) {
         return sendRes<null>({
           res,
@@ -94,29 +107,20 @@ async function updateStatus(req: RequestCustoms<updateStatusProps>, res: Respons
 async function markDelete(req: Request, res: Response) {
   const _id = req.params._id as string
   try {
-    const regisData = await RegisClassRepositories.get(_id)
-    if (regisData.ok) {
-      const updateResult = await RegisClassRepositories.put(_id, 'deleted', true)
-      if (updateResult) {
-        return sendRes<null>({
-          res,
-          code: CODE.OK,
-          msg: MSG.DELETED,
-          data: null,
-        })
-      }
-
+    const updateResult = await RegisClassRepositories.patch(_id, { deleted: true })
+    if (updateResult) {
       return sendRes<null>({
         res,
-        code: CODE.FAILED,
-        msg: MSG.NOT_FOUND,
+        code: CODE.OK,
+        msg: MSG.DELETED,
         data: null,
       })
     }
+
     return sendRes<null>({
       res,
-      code: CODE.NOT_FOUND,
-      msg: `REGIS DATA NOT FOUND`,
+      code: CODE.FAILED,
+      msg: MSG.NOT_FOUND,
       data: null,
     })
   } catch (error) {
@@ -124,8 +128,66 @@ async function markDelete(req: Request, res: Response) {
   }
 }
 
+async function search(req: Request, res: Response) {
+  const query = req.query
+  try {
+    let filter: SearchRegisClassParamsProps = {
+      deleted: false,
+    }
+
+    if (query.status !== undefined && query.status !== null) {
+      filter.status = Number(query.status)
+    }
+    const result = await RegisClassRepositories.search({
+      filter: filter,
+      page: Number(query.page) ?? 1,
+      pageSize: Number(query.pageSize) ?? 10,
+    })
+    if (result.ok) {
+      return sendRes<PagingDataProps<RegisClassProps>>({
+        res,
+        code: CODE.OK,
+        msg: MSG.OK,
+        data: result.data,
+      })
+    }
+    return sendRes<null>({
+      res,
+      code: CODE.NOT_FOUND,
+      msg: `QUERRY ERROR`,
+      data: null,
+    })
+  } catch (error) {
+    throw new Error(`regis-Class:controller: ${error}`)
+  }
+}
+
+// async function getById(req: Request, res: Response) {
+//   const _id = req.params._id as string
+//   try {
+//     const result = await ClassRepositories.get(_id)
+//     if (result.ok) {
+//       return sendRes<ClassProps>({
+//         res,
+//         code: CODE.OK,
+//         msg: MSG.OK,
+//         data: result.data,
+//       })
+//     }
+//     return sendRes<null>({
+//       res,
+//       code: CODE.NOT_FOUND,
+//       msg: `CLASS NOT FOUND`,
+//       data: null,
+//     })
+//   } catch (error) {
+//     throw new Error(`class: get by id error: ${error}`)
+//   }
+// }
+
 export const RegisClassController = {
   regis,
   updateStatus,
   markDelete,
+  search,
 }

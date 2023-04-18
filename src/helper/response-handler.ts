@@ -1,11 +1,10 @@
 import { Response } from 'express'
 import { CODE } from '../const/common'
 
-export interface PagingDataProps {
-  dataTable: any
+export interface PagingDataProps<T> {
+  dataTable: T[]
   paging: {
     page: number
-    total: number
     pageSize: number
   }
   totalCount: number

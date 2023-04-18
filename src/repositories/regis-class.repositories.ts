@@ -1,6 +1,9 @@
+import { REGIS_STATUS } from '../const/common'
 import { database } from '../models/model.index'
 import { RegisClassProps } from '../models/regis-class.model'
 import { RepositoriesResultProps } from './types'
+import { SearchFilterProps, Searcher } from './common.repositories'
+import { PagingDataProps } from '../helper/response-handler'
 
 const RegisClasses = database.regisclasses
 async function create(payload: RegisClassProps): Promise<RepositoriesResultProps<string | null>> {
@@ -39,15 +42,11 @@ async function get(_id: string): Promise<RepositoriesResultProps<RegisClassProps
   }
 }
 
-async function put(
+async function patch(
   _id: string,
-  key: keyof RegisClassProps,
-  value: string | number | boolean,
+  newValue: Partial<RegisClassProps>,
 ): Promise<RepositoriesResultProps<null>> {
   try {
-    const newValue = {
-      [key]: value,
-    }
     const result = await RegisClasses.findOneAndUpdate({ _id }, newValue)
     console.log(result)
     if (result) {
@@ -64,9 +63,32 @@ async function put(
     throw new Error(`repositories:Create error: ${error}`)
   }
 }
+export interface SearchRegisClassParamsProps {
+  status?: REGIS_STATUS
+  deleted?: Boolean
+}
 
+async function search({
+  filter,
+  page,
+  pageSize,
+}: SearchFilterProps<SearchRegisClassParamsProps>): Promise<
+  RepositoriesResultProps<PagingDataProps<RegisClassProps> | null>
+> {
+  console.log('repo:regis-class', filter)
+  try {
+    const result = await Searcher<SearchRegisClassParamsProps>(RegisClasses, filter, page, pageSize)
+    return {
+      ok: true,
+      data: result.data,
+    }
+  } catch (error) {
+    throw new Error(`repositories-class:Get error: ${error}`)
+  }
+}
 export const RegisClassRepositories = {
   create,
-  put,
+  patch,
   get,
+  search,
 }

@@ -25,14 +25,14 @@ function regis(body: RegisClassProps): ResultProps {
     valid = false
     msg.push('Facebook Link')
   }
-  if (body.method === undefined || body.method === null) {
-    valid = false
-    msg.push('Method')
-  }
-  if (!body.classLevel || (body.classLevel && body.classLevel.trim().length === 0)) {
-    valid = false
-    msg.push('Class level')
-  }
+  // if (body.method === undefined || body.method === null) {
+  //   valid = false
+  //   msg.push('Method')
+  // }
+  // if (!body.classLevel || (body.classLevel && body.classLevel.trim().length === 0)) {
+  //   valid = false
+  //   msg.push('Class level')
+  // }
   if (!body.knowFrom || (body.knowFrom && body.knowFrom?.trim().length === 0)) {
     valid = false
     msg.push('Know From')

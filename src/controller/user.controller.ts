@@ -102,35 +102,45 @@ async function LoginWithAccount(req: RequestCustoms<LoginAccountProps>, res: Res
       data: null,
     })
   }
-  try {
-    const user: UserProps = await Users.findOne({ email })
-    const passwordValid = await bcrypt.compare(password, user.password)
 
-    if (user && passwordValid) {
-      const accessToken = await createAccessToken(email, user.role)
-      const replaceRedisResult = await redisControl.setRecord(email, accessToken)
-      if (replaceRedisResult.ok) {
-        return sendRes({
-          res: res,
-          code: CODE.OK,
-          msg: 'OK',
-          data: { accessToken },
-        })
-      } else {
-        return sendRes({
-          res: res,
-          code: CODE.INTERNAL,
-          msg: 'SERVER ERROR',
-          data: null,
-        })
-      }
-    } else {
+  try {
+    const user: UserProps | null = await Users.findOne({ email })
+
+    if (!user || user === null) {
       return sendRes({
         res: res,
         code: CODE.FAILED,
         msg: 'Invalid email or password',
         data: null,
       })
+    } else {
+      const passwordValid = await bcrypt.compare(password, user.password)
+      if (passwordValid) {
+        const accessToken = await createAccessToken(email, user.role)
+        const replaceRedisResult = await redisControl.setRecord(email, accessToken)
+        if (replaceRedisResult.ok) {
+          return sendRes({
+            res: res,
+            code: CODE.OK,
+            msg: 'OK',
+            data: { accessToken },
+          })
+        } else {
+          return sendRes({
+            res: res,
+            code: CODE.INTERNAL,
+            msg: 'Server Error',
+            data: null,
+          })
+        }
+      } else {
+        return sendRes({
+          res: res,
+          code: CODE.FAILED,
+          msg: 'Invalid email or password',
+          data: null,
+        })
+      }
     }
   } catch (err) {
     throw new Error(`some thing wrong when login ${err}`)

@@ -10,13 +10,14 @@ import { userRoutes } from './routes/user.routes'
 import { RegisClassRoutes } from './routes/regis-class.routes'
 import { ClassRoutes } from './routes/class.routes'
 import { PostRoutes } from './routes/post.routes'
+import { StudentRoutes } from './routes/students.router'
 
 const app = express()
 
 app.use(cors())
 app.use(express.json())
-app.use(bodyParser.urlencoded({ extended: true }))
-
+app.use(bodyParser.json({ limit: '25mb' }))
+app.use(bodyParser.urlencoded({ limit: '25mb' }))
 //connect to db
 database.mongoose
   .connect(database.url, {
@@ -40,6 +41,7 @@ userRoutes(app)
 ClassRoutes(app)
 RegisClassRoutes(app)
 PostRoutes(app)
+StudentRoutes(app)
 //
 
 const PORT = process.env.PORT
