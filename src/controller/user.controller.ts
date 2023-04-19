@@ -5,17 +5,19 @@ import { RequestCustoms } from '../helper/requestHanlder'
 import { UserProps } from '../models/user.model'
 import { CODE, KEY, MSG, ROLE, USER_STATUS } from '../const/common'
 import { sendRes } from '../helper/response-handler'
-import { AuthRequestProps } from '../middleware/auth'
+import { AuthRequestProps, AuthenValueProps } from '../middleware/auth'
 import { database } from '../models/model.index'
 import { userValidator } from '../validator/user.validator'
 import { redisControl } from '../middleware/redis'
+import { sendEmailService } from '../services/mailer'
+import { compareTokenRedis } from '../helper/common-function'
 
 const Users = database.users
 
 // function: create accessToken
-async function createAccessToken(email: string, role: number) {
-  const token = jwt.sign({ email: email, role: role }, KEY.ACCESS_TOKEN, {
-    expiresIn: '7d',
+async function createToken(email: string, role: number, expiresIn = '7d') {
+  const token = await jwt.sign({ email: email, role: role }, KEY.ACCESS_TOKEN, {
+    expiresIn: expiresIn,
   })
   return token
 }
@@ -62,25 +64,31 @@ async function Register(req: RequestCustoms<UserProps>, res: Response) {
       role: ROLE.USER,
       gender: gender,
       yOB: yOB,
-      status: USER_STATUS.VERIFIED,
+      status: USER_STATUS.NOT_VERIFIED,
       deleted: false,
     })
 
-    if (user) {
-      return sendRes({
-        res: res,
-        code: CODE.CREATED,
-        msg: 'OK',
-        data: null,
-      })
-    } else {
+    if (!user) {
       return sendRes({
         res: res,
         code: CODE.FAILED,
         msg: MSG.UNKNOW,
         data: null,
       })
+
     }
+
+    const authToken = await createToken(user.email, user.role, '1d')
+
+    const contentSend = `This is your link active: http://localhost:8888/api/user/activeCode/${authToken}`
+    await sendEmailService({ to: user.email, subject: 'VALIDATE TOKEN', body: contentSend })
+
+    return sendRes({
+      res: res,
+      code: CODE.CREATED,
+      msg: 'OK',
+      data: null,
+    })
   } catch (err) {
     throw new Error(`some thing wrong went regis new user ${err}`)
   }
@@ -116,7 +124,7 @@ async function LoginWithAccount(req: RequestCustoms<LoginAccountProps>, res: Res
     } else {
       const passwordValid = await bcrypt.compare(password, user.password)
       if (passwordValid) {
-        const accessToken = await createAccessToken(email, user.role)
+        const accessToken = await createToken(email, user.role)
         const replaceRedisResult = await redisControl.setRecord(email, accessToken)
         if (replaceRedisResult.ok) {
           return sendRes({
@@ -144,6 +152,45 @@ async function LoginWithAccount(req: RequestCustoms<LoginAccountProps>, res: Res
     }
   } catch (err) {
     throw new Error(`some thing wrong when login ${err}`)
+  }
+}
+
+// 
+async function CheckRegisterToken(req: AuthRequestProps, res: Response) {
+  try {
+    const { registerToken } = req.params
+
+    console.log(registerToken, 'registerToken');
+    if (!registerToken)
+      return sendRes({
+        res: res,
+        code: CODE.TOKEN_REQUIRED,
+        msg: 'MISSING: Register_Token',
+        data: null,
+      })
+    const decoded = jwt.verify(registerToken, process.env.ACCESS_TOKEN_KEY) as AuthenValueProps
+
+    //TODO: Anh Truong cuu Dat
+    const redisExisted = await redisControl.getRecord(decoded.email)
+    if (!redisExisted.ok) {
+      return sendRes({
+        res: res,
+        code: CODE.TOKEN_REQUIRED,
+        msg: 'TOKEN CHANGED',
+        data: null,
+      })
+    }
+
+    await Users.findOneAndUpdate({ email: decoded.email }, { status: USER_STATUS.VERIFIED })
+
+    return sendRes({
+      res: res,
+      code: CODE.OK,
+      msg: 'SUCCESS',
+      data: null,
+    })
+  } catch (error) {
+
   }
 }
 
@@ -176,4 +223,5 @@ export const UserController = {
   Register,
   LoginWithAccount,
   Auth,
+  CheckRegisterToken,
 }

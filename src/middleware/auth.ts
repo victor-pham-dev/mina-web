@@ -3,21 +3,19 @@ import jwt from 'jsonwebtoken'
 import { CODE, ROLE } from '../const/common'
 import { sendRes } from '../helper/response-handler'
 import { redisControl } from './redis'
+import { compareTokenRedis } from '../helper/common-function'
 
 //types
 export interface AuthenValueProps {
   email: string
   role: number
+  registerToken: string
 }
 export interface AuthRequestProps extends Request {
   user: AuthenValueProps
 }
 
-function compareTokenRedis(reqToken: string, redisToken: string): boolean {
-  if (reqToken === redisToken) return true
-  return false
-}
-//
+
 export const commonAuth = async (req: AuthRequestProps, res: Response, next: NextFunction) => {
   const accessToken: string = req.headers['x-access-token'] as string
   if (!accessToken)
