@@ -7,7 +7,7 @@ import { sendMailValidator } from '../validator/send-mail.validator'
 import uploader from '../services/upload-file'
 import path from 'path'
 import { removeSpecialChars } from '../helper/data-convert'
-import { transporter } from '../services/mailer'
+import { sendEmailService } from '../services/mailer'
 export interface SendMailProps {
   from: string
   to: string
@@ -47,23 +47,27 @@ export interface SendMailProps {
 //   }
 // }
 
-async function Mailer(req: RequestCustoms<SendMailProps>, res: Response){
-  const result = await transporter({...req.body, from: 'truongpham2412.dev@gmail.com'})
-  if(result){
+async function Mailer(req: RequestCustoms<SendMailProps>, res: Response) {
+  //const result = await sendEmailService({ to: 'sieunhankiet@gmail.com', subject: 'Test thoi', body: 'No body' })
+  //const result = await transporter({...req.body, from: 'truongpham2412.dev@gmail.com'})
+
+  try {
+    await sendEmailService({ to: 'sieunhankiet@gmail.com', subject: 'Hi Dat', body: 'Toi chi muon test mail thoi' })
     return sendRes<null>({
       res: res,
       code: CODE.OK,
       msg: 'SENT',
       data: null,
     })
-  }else{
+  } catch (error) {
     return sendRes<null>({
       res: res,
       code: CODE.FAILED,
       msg: 'FAILED',
-      data: null,
+      data: error,
     })
   }
+
 }
 
 async function SingleUpload(req: Request, res: Response) {
