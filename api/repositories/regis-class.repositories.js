@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RegisClassRepositories = void 0;
 const model_index_1 = require("../models/model.index");
+const common_repositories_1 = require("./common.repositories");
 const RegisClasses = model_index_1.database.regisclasses;
 function create(payload) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -52,12 +53,9 @@ function get(_id) {
         }
     });
 }
-function put(_id, key, value) {
+function patch(_id, newValue) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const newValue = {
-                [key]: value,
-            };
             const result = yield RegisClasses.findOneAndUpdate({ _id }, newValue);
             console.log(result);
             if (result) {
@@ -76,8 +74,24 @@ function put(_id, key, value) {
         }
     });
 }
+function search({ filter, page, pageSize, }) {
+    return __awaiter(this, void 0, void 0, function* () {
+        console.log('repo:regis-class', filter);
+        try {
+            const result = yield (0, common_repositories_1.Searcher)(RegisClasses, filter, page, pageSize);
+            return {
+                ok: true,
+                data: result.data,
+            };
+        }
+        catch (error) {
+            throw new Error(`repositories-class:Get error: ${error}`);
+        }
+    });
+}
 exports.RegisClassRepositories = {
     create,
-    put,
+    patch,
     get,
+    search,
 };

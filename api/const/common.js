@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CLASS_STATUS = exports.CLASS_LEVEL = exports.REGIS_STATUS = exports.LEARN_METHOD = exports.FILE = exports.USER_STATUS = exports.ROLE = exports.MSG = exports.CODE = exports.KEY = void 0;
+exports.POST_STATUS = exports.POST_TYPE = exports.CLASS_STATUS = exports.CLASS_LEVEL = exports.REGIS_STATUS = exports.LEARN_METHOD = exports.FILE = exports.USER_STATUS = exports.ROLE = exports.MSG = exports.CODE = exports.KEY = void 0;
 exports.KEY = {
     ACCESS_TOKEN: process.env.ACCESS_TOKEN_KEY,
 };
@@ -25,6 +25,7 @@ var MSG;
     MSG["NOT_FOUND"] = "Resource not found";
     MSG["INVALID"] = "Invalid resource";
     MSG["OK"] = "ok";
+    MSG["MISSING_PARAMS"] = "missing params";
 })(MSG = exports.MSG || (exports.MSG = {}));
 var ROLE;
 (function (ROLE) {
@@ -68,3 +69,13 @@ var CLASS_STATUS;
     CLASS_STATUS[CLASS_STATUS["PROCESSING"] = 1] = "PROCESSING";
     CLASS_STATUS[CLASS_STATUS["END"] = 2] = "END";
 })(CLASS_STATUS = exports.CLASS_STATUS || (exports.CLASS_STATUS = {}));
+var POST_TYPE;
+(function (POST_TYPE) {
+    POST_TYPE["STUDY"] = "study";
+    POST_TYPE["NEWS"] = "news";
+})(POST_TYPE = exports.POST_TYPE || (exports.POST_TYPE = {}));
+var POST_STATUS;
+(function (POST_STATUS) {
+    POST_STATUS[POST_STATUS["APPROVAL"] = 0] = "APPROVAL";
+    POST_STATUS[POST_STATUS["APPROVED"] = 1] = "APPROVED";
+})(POST_STATUS = exports.POST_STATUS || (exports.POST_STATUS = {}));

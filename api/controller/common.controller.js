@@ -12,47 +12,66 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CommonController = exports.SendMail = void 0;
+exports.CommonController = void 0;
 const common_1 = require("../const/common");
 const response_handler_1 = require("../helper/response-handler");
-const mailer_1 = require("../services/mailer");
-const send_mail_validator_1 = require("../validator/send-mail.validator");
 const upload_file_1 = __importDefault(require("../services/upload-file"));
 const path_1 = __importDefault(require("path"));
-const SendMail = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const bodyValid = send_mail_validator_1.sendMailValidator.send(req.body);
-    if (!bodyValid.valid) {
-        return (0, response_handler_1.sendRes)({
-            res: res,
-            code: common_1.CODE.FAILED,
-            msg: bodyValid.msg.toString(),
-            data: null,
-        });
-    }
-    try {
-        const result = yield (0, mailer_1.sendEmailService)(req.body.to, req.body.subject, req.body.body);
-        if (result.ok) {
+const mailer_1 = require("../services/mailer");
+// export const SendMail = async (req: RequestCustoms<SendMailProps>, res: Response) => {
+//   const bodyValid = sendMailValidator.send(req.body)
+//   if (!bodyValid.valid) {
+//     return sendRes({
+//       res: res,
+//       code: CODE.FAILED,
+//       msg: bodyValid.msg.toString(),
+//       data: null,
+//     })
+//   }
+//   try {
+//     const result: any = await sendEmailService(req.body.to, req.body.subject, req.body.body)
+//     if (result.ok) {
+//       return sendRes({
+//         res: res,
+//         code: CODE.OK,
+//         msg: 'OK',
+//         data: null,
+//       })
+//     } else {
+//       return sendRes({
+//         res: res,
+//         code: CODE.FAILED,
+//         msg: 'SEND FAILED',
+//         data: null,
+//       })
+//     }
+//   } catch (error) {
+//     throw new Error(`send mail failed ${error}`)
+//   }
+// }
+function Mailer(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        //const result = await sendEmailService({ to: 'sieunhankiet@gmail.com', subject: 'Test thoi', body: 'No body' })
+        //const result = await transporter({...req.body, from: 'truongpham2412.dev@gmail.com'})
+        try {
+            yield (0, mailer_1.sendEmailService)({ to: 'sieunhankiet@gmail.com', subject: 'Hi Dat', body: 'Toi chi muon test mail thoi' });
             return (0, response_handler_1.sendRes)({
                 res: res,
                 code: common_1.CODE.OK,
-                msg: 'OK',
+                msg: 'SENT',
                 data: null,
             });
         }
-        else {
+        catch (error) {
             return (0, response_handler_1.sendRes)({
                 res: res,
                 code: common_1.CODE.FAILED,
-                msg: 'SEND FAILED',
-                data: null,
+                msg: 'FAILED',
+                data: error,
             });
         }
-    }
-    catch (error) {
-        throw new Error(`send mail failed ${error}`);
-    }
-});
-exports.SendMail = SendMail;
+    });
+}
 function SingleUpload(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         upload_file_1.default.single('file')(req, res, function (err) {
@@ -84,4 +103,5 @@ function getImageByName(req, res) {
 exports.CommonController = {
     SingleUpload,
     getImageByName,
+    Mailer
 };

@@ -27,7 +27,11 @@ function create(req, res) {
             });
         }
         try {
-            const createResult = yield class_repositories_1.ClassRepositories.create(Object.assign(Object.assign({}, req.body), { deleted: false, recruiting: true, numberOfStudents: 0, status: common_1.CLASS_STATUS.OPEN }));
+            const createLog = {
+                time: new Date().toLocaleString(),
+                content: 'created',
+            };
+            const createResult = yield class_repositories_1.ClassRepositories.create(Object.assign(Object.assign({}, req.body), { deleted: false, recruiting: true, numberOfStudents: 0, logs: [createLog], status: common_1.CLASS_STATUS.OPEN }));
             if (createResult.ok) {
                 return (0, response_handler_1.sendRes)({
                     res,
@@ -53,7 +57,7 @@ function updateStatus(req, res) {
         try {
             const regisData = yield class_repositories_1.ClassRepositories.get(req.body._id);
             if (regisData.ok) {
-                const updateResult = yield class_repositories_1.ClassRepositories.put(req.body._id, 'status', req.body.status);
+                const updateResult = yield class_repositories_1.ClassRepositories.patch(req.body._id, { status: req.body.status });
                 if (updateResult) {
                     return (0, response_handler_1.sendRes)({
                         res,
@@ -88,7 +92,7 @@ function markDelete(req, res) {
         try {
             const classData = yield class_repositories_1.ClassRepositories.get(_id);
             if (classData.ok) {
-                const updateResult = yield class_repositories_1.ClassRepositories.put(_id, 'deleted', true);
+                const updateResult = yield class_repositories_1.ClassRepositories.patch(_id, { deleted: true });
                 if (updateResult) {
                     return (0, response_handler_1.sendRes)({
                         res,

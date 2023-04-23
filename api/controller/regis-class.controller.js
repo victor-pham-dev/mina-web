@@ -60,10 +60,20 @@ function regis(req, res) {
 }
 function updateStatus(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
+        if (!req.body._id || !req.body.status) {
+            return (0, response_handler_1.sendRes)({
+                res,
+                code: common_1.CODE.FAILED,
+                msg: common_1.MSG.MISSING_PARAMS,
+                data: null,
+            });
+        }
         try {
             const regisData = yield regis_class_repositories_1.RegisClassRepositories.get(req.body._id);
             if (regisData.ok) {
-                const updateResult = yield regis_class_repositories_1.RegisClassRepositories.put(req.body._id, 'status', req.body.status);
+                const updateResult = yield regis_class_repositories_1.RegisClassRepositories.patch(req.body._id, {
+                    status: req.body.status,
+                });
                 if (updateResult) {
                     return (0, response_handler_1.sendRes)({
                         res,
@@ -96,28 +106,19 @@ function markDelete(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const _id = req.params._id;
         try {
-            const regisData = yield regis_class_repositories_1.RegisClassRepositories.get(_id);
-            if (regisData.ok) {
-                const updateResult = yield regis_class_repositories_1.RegisClassRepositories.put(_id, 'deleted', true);
-                if (updateResult) {
-                    return (0, response_handler_1.sendRes)({
-                        res,
-                        code: common_1.CODE.OK,
-                        msg: common_1.MSG.DELETED,
-                        data: null,
-                    });
-                }
+            const updateResult = yield regis_class_repositories_1.RegisClassRepositories.patch(_id, { deleted: true });
+            if (updateResult) {
                 return (0, response_handler_1.sendRes)({
                     res,
-                    code: common_1.CODE.FAILED,
-                    msg: common_1.MSG.NOT_FOUND,
+                    code: common_1.CODE.OK,
+                    msg: common_1.MSG.DELETED,
                     data: null,
                 });
             }
             return (0, response_handler_1.sendRes)({
                 res,
-                code: common_1.CODE.NOT_FOUND,
-                msg: `REGIS DATA NOT FOUND`,
+                code: common_1.CODE.FAILED,
+                msg: common_1.MSG.NOT_FOUND,
                 data: null,
             });
         }
@@ -126,8 +127,67 @@ function markDelete(req, res) {
         }
     });
 }
+function search(req, res) {
+    var _a, _b;
+    return __awaiter(this, void 0, void 0, function* () {
+        const query = req.query;
+        try {
+            let filter = {
+                deleted: false,
+            };
+            if (query.status !== undefined && query.status !== null) {
+                filter.status = Number(query.status);
+            }
+            const result = yield regis_class_repositories_1.RegisClassRepositories.search({
+                filter: filter,
+                page: (_a = Number(query.page)) !== null && _a !== void 0 ? _a : 1,
+                pageSize: (_b = Number(query.pageSize)) !== null && _b !== void 0 ? _b : 10,
+            });
+            if (result.ok) {
+                return (0, response_handler_1.sendRes)({
+                    res,
+                    code: common_1.CODE.OK,
+                    msg: common_1.MSG.OK,
+                    data: result.data,
+                });
+            }
+            return (0, response_handler_1.sendRes)({
+                res,
+                code: common_1.CODE.NOT_FOUND,
+                msg: `QUERRY ERROR`,
+                data: null,
+            });
+        }
+        catch (error) {
+            throw new Error(`regis-Class:controller: ${error}`);
+        }
+    });
+}
+// async function getById(req: Request, res: Response) {
+//   const _id = req.params._id as string
+//   try {
+//     const result = await ClassRepositories.get(_id)
+//     if (result.ok) {
+//       return sendRes<ClassProps>({
+//         res,
+//         code: CODE.OK,
+//         msg: MSG.OK,
+//         data: result.data,
+//       })
+//     }
+//     return sendRes<null>({
+//       res,
+//       code: CODE.NOT_FOUND,
+//       msg: `CLASS NOT FOUND`,
+//       data: null,
+//     })
+//   } catch (error) {
+//     throw new Error(`class: get by id error: ${error}`)
+//   }
+// }
 exports.RegisClassController = {
     regis,
     updateStatus,
     markDelete,
+    search,
 };

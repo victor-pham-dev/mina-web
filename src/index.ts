@@ -11,11 +11,12 @@ import { RegisClassRoutes } from './routes/regis-class.routes'
 import { ClassRoutes } from './routes/class.routes'
 import { PostRoutes } from './routes/post.routes'
 import { StudentRoutes } from './routes/students.router'
+import { QuestionRoutes } from './routes/question.routes'
 
 const app = express()
 
 app.use(cors())
-app.use(express.json())
+// app.use(express.json())
 app.use(bodyParser.json({ limit: '25mb' }))
 app.use(bodyParser.urlencoded({ limit: '25mb' }))
 //connect to db
@@ -42,6 +43,7 @@ ClassRoutes(app)
 RegisClassRoutes(app)
 PostRoutes(app)
 StudentRoutes(app)
+QuestionRoutes(app)
 
 app.get('/', (req, res) => {
   res.send('This is mina api')

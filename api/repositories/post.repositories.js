@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PostRepositories = void 0;
 const model_index_1 = require("../models/model.index");
+const common_repositories_1 = require("./common.repositories");
 const Posts = model_index_1.database.posts;
 function create(payload) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -52,12 +53,9 @@ function get(_id) {
         }
     });
 }
-function put(_id, key, value) {
+function patch(_id, newValue) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const newValue = {
-                [key]: value,
-            };
             const result = yield Posts.findOneAndUpdate({ _id }, newValue);
             if (result) {
                 return {
@@ -71,27 +69,22 @@ function put(_id, key, value) {
             };
         }
         catch (error) {
-            throw new Error(`repositories-post:Put error: ${error}`);
+            throw new Error(`repositories-post:patch error: ${error}`);
         }
     });
 }
-function patch(payload) {
+function search({ filter, page, pageSize, }) {
     return __awaiter(this, void 0, void 0, function* () {
+        console.log('repo:post', filter);
         try {
-            const result = yield Posts.findOneAndUpdate({ _id: payload._id }, { title: payload.title, content: payload.content, type: payload.type });
-            if (result) {
-                return {
-                    ok: true,
-                    data: null,
-                };
-            }
+            const result = yield (0, common_repositories_1.Searcher)(Posts, filter, page, pageSize);
             return {
-                ok: false,
-                data: null,
+                ok: true,
+                data: result.data,
             };
         }
         catch (error) {
-            throw new Error(`repositories-post:Put error: ${error}`);
+            throw new Error(`repositories-post:search error: ${error}`);
         }
     });
 }
@@ -99,5 +92,5 @@ exports.PostRepositories = {
     create,
     patch,
     get,
-    put,
+    search,
 };

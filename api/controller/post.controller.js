@@ -78,44 +78,33 @@ function getOne(req, res) {
             });
         }
         catch (error) {
-            throw new Error(`post:change status error: ${error}`);
+            throw new Error(`post:get by id: ${error}`);
         }
     });
 }
 // checking regis
-function update(req, res) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const regisData = post_repositories_1.PostRepositories.get(req.body._id);
-            if (regisData) {
-                const updateResult = yield post_repositories_1.PostRepositories.patch(req.body);
-                if (updateResult) {
-                    return (0, response_handler_1.sendRes)({
-                        res,
-                        code: common_1.CODE.OK,
-                        msg: common_1.MSG.UPDATED,
-                        data: null,
-                    });
-                }
-                return (0, response_handler_1.sendRes)({
-                    res,
-                    code: common_1.CODE.FAILED,
-                    msg: common_1.MSG.NOT_FOUND,
-                    data: null,
-                });
-            }
-            return (0, response_handler_1.sendRes)({
-                res,
-                code: common_1.CODE.NOT_FOUND,
-                msg: `Post NOT FOUND`,
-                data: null,
-            });
-        }
-        catch (error) {
-            throw new Error(`post:change status error: ${error}`);
-        }
-    });
-}
+// interface
+// async function update(req: RequestCustoms<PostProps>, res: Response) {
+//   try {
+//       const updateResult = await PostRepositories.patch(req.body.)
+//       if (updateResult) {
+//         return sendRes<null>({
+//           res,
+//           code: CODE.OK,
+//           msg: MSG.UPDATED,
+//           data: null,
+//         })
+//       }
+//       return sendRes<null>({
+//         res,
+//         code: CODE.FAILED,
+//         msg: MSG.NOT_FOUND,
+//         data: null,
+//       })
+//   } catch (error) {
+//     throw new Error(`post:change status error: ${error}`)
+//   }
+// }
 // change status
 function markDelete(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -123,7 +112,7 @@ function markDelete(req, res) {
         try {
             const regisData = yield post_repositories_1.PostRepositories.get(_id);
             if (regisData.ok) {
-                const updateResult = yield post_repositories_1.PostRepositories.put(_id, 'deleted', true);
+                const updateResult = yield post_repositories_1.PostRepositories.patch(_id, { deleted: true });
                 if (updateResult) {
                     return (0, response_handler_1.sendRes)({
                         res,
@@ -151,9 +140,54 @@ function markDelete(req, res) {
         }
     });
 }
+function search(req, res) {
+    var _a, _b;
+    return __awaiter(this, void 0, void 0, function* () {
+        const query = req.query;
+        try {
+            let filter = {
+                deleted: false,
+            };
+            if (query.status !== undefined && query.status !== null) {
+                filter.status = Number(query.status);
+            }
+            if (query.type !== undefined && query.type !== null) {
+                filter.type = query.type.toString();
+            }
+            if (query.title !== undefined && query.title !== null) {
+                const regexString = query.title.toString().split(' ').join('.*');
+                const regex = new RegExp(regexString, 'i');
+                filter.title = { $regex: regex };
+            }
+            const result = yield post_repositories_1.PostRepositories.search({
+                filter: filter,
+                page: (_a = Number(query.page)) !== null && _a !== void 0 ? _a : 1,
+                pageSize: (_b = Number(query.pageSize)) !== null && _b !== void 0 ? _b : 8,
+            });
+            if (result.ok) {
+                return (0, response_handler_1.sendRes)({
+                    res,
+                    code: common_1.CODE.OK,
+                    msg: common_1.MSG.OK,
+                    data: result.data,
+                });
+            }
+            return (0, response_handler_1.sendRes)({
+                res,
+                code: common_1.CODE.NOT_FOUND,
+                msg: `QUERRY ERROR`,
+                data: null,
+            });
+        }
+        catch (error) {
+            throw new Error(`Post:controller: ${error}`);
+        }
+    });
+}
 exports.PostController = {
     create,
-    update,
+    // update,
     markDelete,
     getOne,
+    search,
 };

@@ -4,10 +4,11 @@ import { PostController } from '../controller/post.controller'
 
 export function PostRoutes(app: Express) {
   const router = Router()
-  router.get('/:_id', PostController.getOne)
+  router.get('/search', PostController.search)
+  router.get('/id=:_id', PostController.getOne)
   router.post('/', adminAuth, PostController.create)
   // router.patch('/', adminAuth, PostController.update)
-  router.delete('/:id', adminAuth, PostController.markDelete)
+  router.delete('/id=:id', adminAuth, PostController.markDelete)
 
   app.use('/api/post', router)
 }

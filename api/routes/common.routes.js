@@ -9,7 +9,7 @@ const CommonRoutes = (app) => {
     router.get('/', (req, res) => {
         res.send('Welcome to mina');
     });
-    router.post('/send-mail', auth_1.adminAuth, common_controller_1.SendMail);
+    router.post('/send-mail', auth_1.adminAuth, common_controller_1.CommonController.Mailer);
     router.post('/file/', auth_1.adminAuth, common_controller_1.CommonController.SingleUpload);
     router.get('/file/:imageName', common_controller_1.CommonController.getImageByName);
     app.use('/api', router);

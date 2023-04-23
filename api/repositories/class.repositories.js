@@ -53,12 +53,9 @@ function get(_id) {
         }
     });
 }
-function put(_id, key, value) {
+function patch(_id, newValue) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const newValue = {
-                [key]: value,
-            };
             const result = yield Classes.findOneAndUpdate({ _id }, newValue);
             if (result) {
                 return {
@@ -72,7 +69,7 @@ function put(_id, key, value) {
             };
         }
         catch (error) {
-            throw new Error(`repositories-class:Put error: ${error}`);
+            throw new Error(`repositories-class:patch error: ${error}`);
         }
     });
 }
@@ -81,15 +78,9 @@ function search({ filter, page, pageSize, }) {
         console.log('repo:class', filter);
         try {
             const result = yield (0, common_repositories_1.Searcher)(Classes, filter, page, pageSize);
-            if (result.ok) {
-                return {
-                    ok: true,
-                    data: result.data,
-                };
-            }
             return {
-                ok: false,
-                data: null,
+                ok: true,
+                data: result.data,
             };
         }
         catch (error) {
@@ -99,7 +90,7 @@ function search({ filter, page, pageSize, }) {
 }
 exports.ClassRepositories = {
     create,
-    put,
+    patch,
     get,
     search,
 };

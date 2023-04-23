@@ -41,16 +41,16 @@ const RegisClassSchema = new mongoose_1.default.Schema({
             message: 'Invalid email format',
         },
     },
-    method: {
-        type: Number,
-        required: true,
-        validate: {
-            validator: function (value) {
-                return Object.values(common_1.LEARN_METHOD).includes(value);
-            },
-            message: 'Invalid phone format',
-        },
-    },
+    // method: {
+    //   type: Number,
+    //   required: true,
+    //   validate: {
+    //     validator: function (value: number) {
+    //       return Object.values(LEARN_METHOD).includes(value as LEARN_METHOD)
+    //     },
+    //     message: 'Invalid phone format',
+    //   },
+    // },
     status: {
         type: Number,
         required: true,
@@ -61,16 +61,16 @@ const RegisClassSchema = new mongoose_1.default.Schema({
             message: 'Invalid status',
         },
     },
-    classLevel: {
-        type: String,
-        required: true,
-        validate: {
-            validator: function (value) {
-                return Object.values(common_1.CLASS_LEVEL).includes(value);
-            },
-            message: 'Invalid phone format',
-        },
-    },
+    // classLevel: {
+    //   type: String,
+    //   required: true,
+    //   validate: {
+    //     validator: function (value: string) {
+    //       return Object.values(CLASS_LEVEL).includes(value as CLASS_LEVEL)
+    //     },
+    //     message: 'Invalid phone format',
+    //   },
+    // },
     knowFrom: {
         type: String,
         required: true,

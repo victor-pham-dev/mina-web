@@ -6,10 +6,11 @@ const auth_1 = require("../middleware/auth");
 const post_controller_1 = require("../controller/post.controller");
 function PostRoutes(app) {
     const router = (0, express_1.Router)();
-    router.get('/:_id', post_controller_1.PostController.getOne);
+    router.get('/search', post_controller_1.PostController.search);
+    router.get('/id=:_id', post_controller_1.PostController.getOne);
     router.post('/', auth_1.adminAuth, post_controller_1.PostController.create);
-    router.patch('/', auth_1.adminAuth, post_controller_1.PostController.update);
-    router.delete('/:id', auth_1.adminAuth, post_controller_1.PostController.markDelete);
+    // router.patch('/', adminAuth, PostController.update)
+    router.delete('/id=:id', auth_1.adminAuth, post_controller_1.PostController.markDelete);
     app.use('/api/post', router);
 }
 exports.PostRoutes = PostRoutes;

@@ -60,11 +60,20 @@ export enum CLASS_LEVEL {
   N3 = 'N3',
   N4 = 'N4',
   N5 = 'N5',
-  N5B = 'N5B',
 }
 
 export enum CLASS_STATUS {
   OPEN = 0, //for recruit student
   PROCESSING = 1, //class is started
   END = 2, // class ended
+}
+
+export enum POST_TYPE {
+  STUDY = 'study',
+  NEWS = 'news',
+}
+
+export enum POST_STATUS {
+  APPROVAL = 0,
+  APPROVED = 1,
 }

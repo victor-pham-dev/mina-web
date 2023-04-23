@@ -1,14 +1,11 @@
 import { Request, Response } from 'express'
 import { RequestCustoms } from '../helper/requestHanlder'
-import { CLASS_STATUS, CODE, MSG, REGIS_STATUS } from '../const/common'
+import { CODE, MSG } from '../const/common'
 import { PagingDataProps, sendRes } from '../helper/response-handler'
-import { ClassProps } from '../models/class.model'
-import { ClassValidator } from '../validator/class.validator'
-import { ClassRepositories, SearchClassParamsProps } from '../repositories/class.repositories'
 import { LogProps } from '../models/common-types'
 import { StudentProps } from '../models/student.model'
 import { StudentValidator } from '../validator/student.validator'
-import { StudentRepositories } from '../repositories/student.repositories'
+import { SearchStudentFilterProps, StudentRepositories } from '../repositories/student.repositories'
 
 // create regis class info
 async function create(req: RequestCustoms<StudentProps>, res: Response) {
@@ -46,7 +43,7 @@ async function create(req: RequestCustoms<StudentProps>, res: Response) {
       data: null,
     })
   } catch (error) {
-    throw new Error(`class:create error ${error}`)
+    throw new Error(`student:create error ${error}`)
   }
 }
 
@@ -123,44 +120,38 @@ async function create(req: RequestCustoms<StudentProps>, res: Response) {
 
 // // SearchClassParamsProps
 
-// async function search(req: Request, res: Response) {
-//   const query = req.query
-//   try {
-//     let filter: SearchClassParamsProps = {
-//       deleted: false,
-//     }
-//     if (query.status !== undefined && query.status !== null) {
-//       filter.status = Number(query.status)
-//     }
-//     if (query.recruiting !== undefined && query.recruiting !== null) {
-//       filter.recruiting = Boolean(query.recruiting)
-//     }
-//     if (query.classLevel !== undefined && query.classLevel !== null) {
-//       filter.classLevel = query.classLevel.toString()
-//     }
-//     const result = await ClassRepositories.search({
-//       filter: filter,
-//       page: Number(query.page) ?? 1,
-//       pageSize: Number(query.pageSize) ?? 9,
-//     })
-//     if (result.ok) {
-//       return sendRes<PagingDataProps<ClassProps>>({
-//         res,
-//         code: CODE.OK,
-//         msg: MSG.OK,
-//         data: result.data,
-//       })
-//     }
-//     return sendRes<null>({
-//       res,
-//       code: CODE.NOT_FOUND,
-//       msg: `QUERRY ERROR`,
-//       data: null,
-//     })
-//   } catch (error) {
-//     throw new Error(`Class:controller: ${error}`)
-//   }
-// }
+async function search(req: Request, res: Response) {
+  const query = req.query
+  try {
+    let filter: SearchStudentFilterProps = {
+      deleted: false,
+    }
+    if (query.classId !== undefined && query.classId !== null) {
+      filter.classId = query.classId.toString()
+    }
+    const result = await StudentRepositories.search({
+      filter: filter,
+      page: Number(query.page) ?? 1,
+      pageSize: Number(query.pageSize) ?? 10,
+    })
+    if (result.ok) {
+      return sendRes<PagingDataProps<any>>({
+        res,
+        code: CODE.OK,
+        msg: MSG.OK,
+        data: result.data,
+      })
+    }
+    return sendRes<null>({
+      res,
+      code: CODE.NOT_FOUND,
+      msg: `QUERRY ERROR`,
+      data: null,
+    })
+  } catch (error) {
+    throw new Error(`Student:controller: ${error}`)
+  }
+}
 
 // async function getById(req: Request, res: Response) {
 //   const _id = req.params._id as string
@@ -187,4 +178,5 @@ async function create(req: RequestCustoms<StudentProps>, res: Response) {
 
 export const StudentController = {
   create,
+  search,
 }

@@ -1,10 +1,10 @@
 import { Request, Response } from 'express'
 import { RequestCustoms } from '../helper/requestHanlder'
 import { CODE, MSG } from '../const/common'
-import { sendRes } from '../helper/response-handler'
+import { PagingDataProps, sendRes } from '../helper/response-handler'
 import { PostProps } from '../models/post.model'
 import { PostValidator } from '../validator/post.validator'
-import { PostRepositories } from '../repositories/post.repositories'
+import { PostRepositories, SearchPostParamsProps } from '../repositories/post.repositories'
 
 // create regis class info
 async function create(req: RequestCustoms<PostProps>, res: Response) {
@@ -69,7 +69,7 @@ async function getOne(req: Request, res: Response) {
       data: null,
     })
   } catch (error) {
-    throw new Error(`post:change status error: ${error}`)
+    throw new Error(`post:get by id: ${error}`)
   }
 }
 // checking regis
@@ -131,10 +131,51 @@ async function markDelete(req: Request, res: Response) {
     throw new Error(`post: delete error: ${error}`)
   }
 }
+async function search(req: Request, res: Response) {
+  const query = req.query
+  try {
+    let filter: SearchPostParamsProps = {
+      deleted: false,
+    }
+    if (query.status !== undefined && query.status !== null) {
+      filter.status = Number(query.status)
+    }
+    if (query.type !== undefined && query.type !== null) {
+      filter.type = query.type.toString()
+    }
+    if (query.title !== undefined && query.title !== null) {
+      const regexString = query.title.toString().split(' ').join('.*')
+      const regex = new RegExp(regexString, 'i')
+      filter.title = { $regex: regex }
+    }
+    const result = await PostRepositories.search({
+      filter: filter,
+      page: Number(query.page) ?? 1,
+      pageSize: Number(query.pageSize) ?? 8,
+    })
+    if (result.ok) {
+      return sendRes<PagingDataProps<PostProps>>({
+        res,
+        code: CODE.OK,
+        msg: MSG.OK,
+        data: result.data,
+      })
+    }
+    return sendRes<null>({
+      res,
+      code: CODE.NOT_FOUND,
+      msg: `QUERRY ERROR`,
+      data: null,
+    })
+  } catch (error) {
+    throw new Error(`Post:controller: ${error}`)
+  }
+}
 
 export const PostController = {
   create,
   // update,
   markDelete,
   getOne,
+  search,
 }

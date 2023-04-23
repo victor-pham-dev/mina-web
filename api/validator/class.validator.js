@@ -17,9 +17,13 @@ function create(body) {
         valid = false;
         msg.push('Day of week');
     }
-    if (!body.schedule) {
+    if (!body.startDate) {
         valid = false;
-        msg.push('Schedule');
+        msg.push('startDate');
+    }
+    if (!body.numberOfLessons) {
+        valid = false;
+        msg.push('numberOfLessons');
     }
     if (!body.time) {
         valid = false;

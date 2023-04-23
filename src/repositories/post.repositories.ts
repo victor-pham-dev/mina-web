@@ -2,6 +2,9 @@ import { database } from '../models/model.index'
 import { ClassProps } from '../models/class.model'
 import { RepositoriesResultProps } from './types'
 import { PostProps } from '../models/post.model'
+import { POST_STATUS, POST_TYPE } from '../const/common'
+import { SearchFilterProps, Searcher } from './common.repositories'
+import { PagingDataProps } from 'src/helper/response-handler'
 
 const Posts = database.posts
 async function create(payload: PostProps): Promise<RepositoriesResultProps<string | null>> {
@@ -61,8 +64,36 @@ async function patch(
   }
 }
 
+export interface SearchPostParamsProps {
+  type?: string
+  status?: POST_STATUS
+  deleted?: Boolean
+  title?: { $regex: RegExp }
+}
+
+async function search({
+  filter,
+  page,
+  pageSize,
+}: SearchFilterProps<SearchPostParamsProps>): Promise<
+  RepositoriesResultProps<PagingDataProps<PostProps> | null>
+> {
+  console.log('repo:post', filter)
+  try {
+    const result = await Searcher<SearchPostParamsProps>(Posts, filter, page, pageSize)
+
+    return {
+      ok: true,
+      data: result.data,
+    }
+  } catch (error) {
+    throw new Error(`repositories-post:search error: ${error}`)
+  }
+}
+
 export const PostRepositories = {
   create,
   patch,
   get,
+  search,
 }

@@ -15,11 +15,11 @@ const sendMailValidator = {
             valid = false;
             msg.push('Email Receive');
         }
-        if (!body.body) {
+        if (!body.text) {
             valid = false;
             msg.push('Body');
         }
         return { valid, msg };
-    }
+    },
 };
 exports.sendMailValidator = sendMailValidator;

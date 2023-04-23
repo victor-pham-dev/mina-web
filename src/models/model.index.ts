@@ -4,8 +4,9 @@ import mongoose from 'mongoose'
 import { UserModel, UserProps } from './user.model'
 import { ClassModel, ClassProps } from './class.model'
 import { RegisClassModel, RegisClassProps } from './regis-class.model'
-import { PostModel, PostProps } from './post.model'
 import { StudentModel, StudentProps } from './student.model'
+import { QuestionModel, QuestionProps } from './question.model'
+import { PostModel, PostProps } from './post.model'
 
 mongoose.Promise = global.Promise
 interface databaseProps {
@@ -16,6 +17,7 @@ interface databaseProps {
   classes: Model<Document & ClassProps>
   posts: Model<Document & PostProps>
   students: Model<Document & StudentProps>
+  questions: Model<Document & QuestionProps>
 }
 const database: databaseProps = {
   mongoose: mongoose,
@@ -25,6 +27,7 @@ const database: databaseProps = {
   classes: ClassModel,
   posts: PostModel,
   students: StudentModel,
+  questions: QuestionModel,
 }
 
 export { database }

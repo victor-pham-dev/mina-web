@@ -22,7 +22,6 @@ function Searcher(schema, filter, page, pageSize) {
             const totalCount = yield schema.find(filter).countDocuments();
             if (query && totalCount) {
                 return {
-                    ok: true,
                     data: {
                         dataTable: query,
                         paging: {
@@ -35,8 +34,14 @@ function Searcher(schema, filter, page, pageSize) {
             }
             else {
                 return {
-                    ok: false,
-                    data: null,
+                    data: {
+                        dataTable: [],
+                        paging: {
+                            page: 1,
+                            pageSize: 1,
+                        },
+                        totalCount: 0,
+                    },
                 };
             }
         }

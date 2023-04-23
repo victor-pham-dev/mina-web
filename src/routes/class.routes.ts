@@ -8,7 +8,7 @@ export function ClassRoutes(app: Express) {
   router.patch('/status', adminAuth, ClassController.updateStatus)
   router.delete('/:_id', adminAuth, ClassController.markDelete)
   router.get('/search', ClassController.search)
-  router.get('/:_id', ClassController.getById)
+  router.get('/id=:_id', ClassController.getById)
 
   app.use('/api/class', router)
 }

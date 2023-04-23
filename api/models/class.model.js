@@ -16,16 +16,16 @@ const ClassSchema = new mongoose_1.default.Schema({
         type: Number,
         required: true,
     },
-    cardImg: {
-        type: String,
+    numberOfLessons: {
+        type: Number,
         required: true,
     },
     daysOfWeek: {
         type: Array,
         required: true,
     },
-    schedule: {
-        type: Array,
+    startDate: {
+        type: String,
         required: true,
     },
     time: {
@@ -56,9 +56,8 @@ const ClassSchema = new mongoose_1.default.Schema({
         default: true,
     },
     logs: {
-        type: String,
+        type: [mongoose_1.default.Schema.Types.Mixed],
         required: true,
-        default: '',
     },
     deleted: {
         type: Boolean,

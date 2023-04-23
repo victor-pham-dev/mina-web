@@ -15,8 +15,26 @@ const PostSchema = new mongoose_1.default.Schema({
         type: String,
         required: true,
     },
+    cardImg: {
+        type: String,
+        required: true,
+    },
+    author: {
+        id: {
+            type: String,
+            required: true,
+        },
+        name: {
+            type: String,
+            required: true,
+        },
+    },
     content: {
         type: String,
+        required: true,
+    },
+    status: {
+        type: Number,
         required: true,
     },
     deleted: {
