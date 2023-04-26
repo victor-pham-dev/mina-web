@@ -28,7 +28,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const dotenv = __importStar(require("dotenv"));
 dotenv.config();
-const body_parser_1 = __importDefault(require("body-parser"));
 const cors_1 = __importDefault(require("cors"));
 const express_1 = __importDefault(require("express"));
 const model_index_1 = require("./models/model.index");
@@ -42,8 +41,8 @@ const question_routes_1 = require("./routes/question.routes");
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)());
 // app.use(express.json())
-app.use(body_parser_1.default.json({ limit: '25mb' }));
-app.use(body_parser_1.default.urlencoded({ limit: '25mb' }));
+app.use(express_1.default.json({ limit: '25mb' }));
+app.use(express_1.default.urlencoded({ limit: '25mb', extended: true }));
 //connect to db
 model_index_1.database.mongoose
     .connect(model_index_1.database.url, {
@@ -51,10 +50,10 @@ model_index_1.database.mongoose
     useUnifiedTopology: true,
 })
     .then(() => {
-    console.log('Connected to the database!');
+    //console.log('Connected to the database!')
 })
     .catch((err) => {
-    console.log('Cannot connect to the database!', err);
+    //console.log('Cannot connect to the database!', err)
     process.exit();
 });
 //
@@ -72,5 +71,5 @@ app.get('/', (req, res) => {
 //
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}.`);
+    //console.log(`Server is running on port ${PORT}.`)
 });

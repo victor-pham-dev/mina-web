@@ -3,7 +3,7 @@ import { ClassProps } from '../models/class.model'
 import { RepositoriesResultProps } from './types'
 import { PostProps } from '../models/post.model'
 import { POST_STATUS, POST_TYPE } from '../const/common'
-import { SearchFilterProps, Searcher } from './common.repositories'
+import { SearchFilterProps } from './common.repositories'
 import { PagingDataProps } from 'src/helper/response-handler'
 
 const Posts = database.posts
@@ -78,16 +78,57 @@ async function search({
 }: SearchFilterProps<SearchPostParamsProps>): Promise<
   RepositoriesResultProps<PagingDataProps<PostProps> | null>
 > {
-  console.log('repo:post', filter)
+  //console.log('repo:post', filter)
+  const fields = {
+    content: 0,
+  }
   try {
-    const result = await Searcher<SearchPostParamsProps>(Posts, filter, page, pageSize)
+    const currentPage = (page - 1) * pageSize
+
+    const query = await Posts.find(filter, { ...fields })
+      .sort({ createdAt: -1 })
+      .skip(currentPage)
+      .limit(pageSize)
+    const totalCount = await Posts.find(filter).countDocuments()
+    let data = {} as PagingDataProps<PostProps>
+    if (query && totalCount) {
+      data = {
+        dataTable: query,
+        paging: {
+          page: page,
+          pageSize: pageSize,
+        },
+        totalCount: totalCount,
+      }
+    }
 
     return {
       ok: true,
-      data: result.data,
+      data,
     }
   } catch (error) {
     throw new Error(`repositories-post:search error: ${error}`)
+  }
+}
+
+async function getRelated(
+  currentId: string,
+  type: string,
+): Promise<RepositoriesResultProps<PostProps[]>> {
+  try {
+    const result = await Posts.find(
+      {
+        _id: { $ne: currentId },
+        type,
+      },
+      { content: 0 },
+    ).limit(4)
+    return {
+      ok: true,
+      data: result ?? [],
+    }
+  } catch (error) {
+    throw new Error(`repositories-post: related error`)
   }
 }
 
@@ -96,4 +137,5 @@ export const PostRepositories = {
   patch,
   get,
   search,
+  getRelated,
 }

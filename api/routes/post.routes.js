@@ -9,6 +9,7 @@ function PostRoutes(app) {
     router.get('/search', post_controller_1.PostController.search);
     router.get('/id=:_id', post_controller_1.PostController.getOne);
     router.post('/', auth_1.adminAuth, post_controller_1.PostController.create);
+    router.get('/related', post_controller_1.PostController.getRelated);
     // router.patch('/', adminAuth, PostController.update)
     router.delete('/id=:id', auth_1.adminAuth, post_controller_1.PostController.markDelete);
     app.use('/api/post', router);

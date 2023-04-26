@@ -11,7 +11,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RegisClassRepositories = void 0;
 const model_index_1 = require("../models/model.index");
-const common_repositories_1 = require("./common.repositories");
 const RegisClasses = model_index_1.database.regisclasses;
 function create(payload) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -57,7 +56,7 @@ function patch(_id, newValue) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const result = yield RegisClasses.findOneAndUpdate({ _id }, newValue);
-            console.log(result);
+            //console.log(result)
             if (result) {
                 return {
                     ok: true,
@@ -76,12 +75,28 @@ function patch(_id, newValue) {
 }
 function search({ filter, page, pageSize, }) {
     return __awaiter(this, void 0, void 0, function* () {
-        console.log('repo:regis-class', filter);
+        //console.log('repo:regis-class', filter)
         try {
-            const result = yield (0, common_repositories_1.Searcher)(RegisClasses, filter, page, pageSize);
+            const currentPage = (page - 1) * pageSize;
+            const query = yield RegisClasses.find(filter)
+                .sort({ createdAt: -1 })
+                .skip(currentPage)
+                .limit(pageSize);
+            const totalCount = yield RegisClasses.find(filter).countDocuments();
+            let data = {};
+            if (query && totalCount) {
+                data = {
+                    dataTable: query,
+                    paging: {
+                        page: page,
+                        pageSize: pageSize,
+                    },
+                    totalCount: totalCount,
+                };
+            }
             return {
                 ok: true,
-                data: result.data,
+                data,
             };
         }
         catch (error) {

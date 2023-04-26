@@ -28,6 +28,10 @@ const ClassSchema = new mongoose_1.default.Schema({
         type: String,
         required: true,
     },
+    cardImg: {
+        type: String,
+        required: true,
+    },
     time: {
         type: Array,
         required: true,

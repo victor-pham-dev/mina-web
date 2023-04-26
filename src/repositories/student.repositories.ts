@@ -3,7 +3,7 @@ import { database } from '../models/model.index'
 import { ClassProps } from '../models/class.model'
 import { RepositoriesResultProps } from './types'
 import { CLASS_LEVEL, CLASS_STATUS } from '../const/common'
-import { SearchFilterProps, Searcher } from './common.repositories'
+import { SearchFilterProps } from './common.repositories'
 import { StudentProps } from '../models/student.model'
 import { ClassRepositories } from './class.repositories'
 import { RegisClassProps } from 'src/models/regis-class.model'
@@ -23,9 +23,9 @@ async function create(payload: StudentProps): Promise<RepositoriesResultProps<st
     }
   }
   try {
-    console.log(payload)
+    //console.log(payload)
     const result = await Students.create(payload)
-    console.log(result)
+    //console.log(result)
     if (result) {
       return {
         ok: true,
@@ -101,7 +101,7 @@ async function search({
   page,
   pageSize,
 }: SearchStudentProps): Promise<RepositoriesResultProps<PagingDataProps<SearchResultProps>>> {
-  console.log('repo:student', filter)
+  //console.log('repo:student', filter)
   try {
     const currentPage = (page - 1) * pageSize
     const result = await Students.aggregate([
@@ -147,7 +147,7 @@ async function search({
     const totalCount = await Students.find(filter).countDocuments()
 
     if (result) {
-      console.log(result)
+      //console.log(result)
       return {
         ok: true,
         data: {
@@ -157,7 +157,7 @@ async function search({
         },
       }
     } else {
-      console.log('khong co')
+      //console.log('khong co')
     }
   } catch (error) {
     throw new Error(`repositories-student:Search error: ${error}`)

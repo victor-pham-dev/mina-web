@@ -9,6 +9,7 @@ export interface ClassProps {
   numberOfStudents: number
   numberOfLessons: number
   startDate: string
+  cardImg: string
   time: any
   daysOfWeek: string[]
   description: string
@@ -38,6 +39,10 @@ const ClassSchema: Schema = new mongoose.Schema({
     required: true,
   },
   startDate: {
+    type: String,
+    required: true,
+  },
+  cardImg: {
     type: String,
     required: true,
   },

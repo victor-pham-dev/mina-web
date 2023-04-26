@@ -27,9 +27,9 @@ function create(payload) {
             };
         }
         try {
-            console.log(payload);
+            //console.log(payload)
             const result = yield Students.create(payload);
-            console.log(result);
+            //console.log(result)
             if (result) {
                 return {
                     ok: true,
@@ -90,7 +90,7 @@ function patch(_id, newValue) {
 }
 function search({ filter, page, pageSize, }) {
     return __awaiter(this, void 0, void 0, function* () {
-        console.log('repo:student', filter);
+        //console.log('repo:student', filter)
         try {
             const currentPage = (page - 1) * pageSize;
             const result = yield Students.aggregate([
@@ -133,7 +133,7 @@ function search({ filter, page, pageSize, }) {
                 .exec();
             const totalCount = yield Students.find(filter).countDocuments();
             if (result) {
-                console.log(result);
+                //console.log(result)
                 return {
                     ok: true,
                     data: {
@@ -144,7 +144,7 @@ function search({ filter, page, pageSize, }) {
                 };
             }
             else {
-                console.log('khong co');
+                //console.log('khong co')
             }
         }
         catch (error) {

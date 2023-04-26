@@ -11,7 +11,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ClassRepositories = void 0;
 const model_index_1 = require("../models/model.index");
-const common_repositories_1 = require("./common.repositories");
 const Classes = model_index_1.database.classes;
 function create(payload) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -75,12 +74,32 @@ function patch(_id, newValue) {
 }
 function search({ filter, page, pageSize, }) {
     return __awaiter(this, void 0, void 0, function* () {
-        console.log('repo:class', filter);
+        //console.log('repo:class', filter)
+        const fields = {
+            description: 0,
+        };
         try {
-            const result = yield (0, common_repositories_1.Searcher)(Classes, filter, page, pageSize);
+            const currentPage = (page - 1) * pageSize;
+            const query = yield Classes.find(filter, Object.assign({}, fields))
+                .sort({ createdAt: -1 })
+                .skip(currentPage)
+                .limit(pageSize);
+            //console.log(query)
+            const totalCount = yield Classes.find(filter).countDocuments();
+            let data = {};
+            if (query && totalCount) {
+                data = {
+                    dataTable: query,
+                    paging: {
+                        page: page,
+                        pageSize: pageSize,
+                    },
+                    totalCount: totalCount,
+                };
+            }
             return {
                 ok: true,
-                data: result.data,
+                data,
             };
         }
         catch (error) {

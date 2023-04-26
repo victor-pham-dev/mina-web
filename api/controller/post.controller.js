@@ -184,10 +184,37 @@ function search(req, res) {
         }
     });
 }
+function getRelated(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const currentId = req.query.currentId;
+        const type = req.query.type;
+        try {
+            const result = yield post_repositories_1.PostRepositories.getRelated(currentId, type);
+            if (result.ok) {
+                return (0, response_handler_1.sendRes)({
+                    res,
+                    code: common_1.CODE.OK,
+                    msg: common_1.MSG.OK,
+                    data: result.data,
+                });
+            }
+            return (0, response_handler_1.sendRes)({
+                res,
+                code: common_1.CODE.NOT_FOUND,
+                msg: result.msg,
+                data: null,
+            });
+        }
+        catch (error) {
+            throw new Error(`class: delete error: ${error}`);
+        }
+    });
+}
 exports.PostController = {
     create,
     // update,
     markDelete,
     getOne,
     search,
+    getRelated,
 };

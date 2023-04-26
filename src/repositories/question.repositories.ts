@@ -70,7 +70,7 @@ async function getTestQuestions({
   quantity,
   level,
 }: GetTestQuestionsParamsProps): Promise<RepositoriesResultProps<QuestionProps[]>> {
-  console.log('repo:question', quantity, level)
+  //console.log('repo:question', quantity, level)
   try {
     const result = await Questions.aggregate([
       { $match: { level: level, deleted: false } },

@@ -34,7 +34,7 @@ function create(payload) {
 }
 function getTestQuestions({ quantity, level, }) {
     return __awaiter(this, void 0, void 0, function* () {
-        console.log('repo:question', quantity, level);
+        //console.log('repo:question', quantity, level)
         try {
             const result = yield Questions.aggregate([
                 { $match: { level: level, deleted: false } },

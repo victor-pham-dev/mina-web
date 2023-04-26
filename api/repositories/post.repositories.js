@@ -11,7 +11,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PostRepositories = void 0;
 const model_index_1 = require("../models/model.index");
-const common_repositories_1 = require("./common.repositories");
 const Posts = model_index_1.database.posts;
 function create(payload) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -75,16 +74,52 @@ function patch(_id, newValue) {
 }
 function search({ filter, page, pageSize, }) {
     return __awaiter(this, void 0, void 0, function* () {
-        console.log('repo:post', filter);
+        //console.log('repo:post', filter)
+        const fields = {
+            content: 0,
+        };
         try {
-            const result = yield (0, common_repositories_1.Searcher)(Posts, filter, page, pageSize);
+            const currentPage = (page - 1) * pageSize;
+            const query = yield Posts.find(filter, Object.assign({}, fields))
+                .sort({ createdAt: -1 })
+                .skip(currentPage)
+                .limit(pageSize);
+            const totalCount = yield Posts.find(filter).countDocuments();
+            let data = {};
+            if (query && totalCount) {
+                data = {
+                    dataTable: query,
+                    paging: {
+                        page: page,
+                        pageSize: pageSize,
+                    },
+                    totalCount: totalCount,
+                };
+            }
             return {
                 ok: true,
-                data: result.data,
+                data,
             };
         }
         catch (error) {
             throw new Error(`repositories-post:search error: ${error}`);
+        }
+    });
+}
+function getRelated(currentId, type) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const result = yield Posts.find({
+                _id: { $ne: currentId },
+                type,
+            }, { content: 0 }).limit(4);
+            return {
+                ok: true,
+                data: result !== null && result !== void 0 ? result : [],
+            };
+        }
+        catch (error) {
+            throw new Error(`repositories-post: related error`);
         }
     });
 }
@@ -93,4 +128,5 @@ exports.PostRepositories = {
     patch,
     get,
     search,
+    getRelated,
 };

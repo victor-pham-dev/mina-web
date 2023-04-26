@@ -2,7 +2,7 @@ import { REGIS_STATUS } from '../const/common'
 import { database } from '../models/model.index'
 import { RegisClassProps } from '../models/regis-class.model'
 import { RepositoriesResultProps } from './types'
-import { SearchFilterProps, Searcher } from './common.repositories'
+import { SearchFilterProps } from './common.repositories'
 import { PagingDataProps } from '../helper/response-handler'
 
 const RegisClasses = database.regisclasses
@@ -48,7 +48,7 @@ async function patch(
 ): Promise<RepositoriesResultProps<null>> {
   try {
     const result = await RegisClasses.findOneAndUpdate({ _id }, newValue)
-    console.log(result)
+    //console.log(result)
     if (result) {
       return {
         ok: true,
@@ -75,17 +75,36 @@ async function search({
 }: SearchFilterProps<SearchRegisClassParamsProps>): Promise<
   RepositoriesResultProps<PagingDataProps<RegisClassProps> | null>
 > {
-  console.log('repo:regis-class', filter)
+  //console.log('repo:regis-class', filter)
   try {
-    const result = await Searcher<SearchRegisClassParamsProps>(RegisClasses, filter, page, pageSize)
+    const currentPage = (page - 1) * pageSize
+
+    const query = await RegisClasses.find(filter)
+      .sort({ createdAt: -1 })
+      .skip(currentPage)
+      .limit(pageSize)
+    const totalCount = await RegisClasses.find(filter).countDocuments()
+    let data = {} as PagingDataProps<RegisClassProps>
+    if (query && totalCount) {
+      data = {
+        dataTable: query,
+        paging: {
+          page: page,
+          pageSize: pageSize,
+        },
+        totalCount: totalCount,
+      }
+    }
+
     return {
       ok: true,
-      data: result.data,
+      data,
     }
   } catch (error) {
     throw new Error(`repositories-class:Get error: ${error}`)
   }
 }
+
 export const RegisClassRepositories = {
   create,
   patch,

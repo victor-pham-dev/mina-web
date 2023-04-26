@@ -3,7 +3,7 @@ import { database } from '../models/model.index'
 import { ClassProps } from '../models/class.model'
 import { RepositoriesResultProps } from './types'
 import { CLASS_LEVEL, CLASS_STATUS } from '../const/common'
-import { SearchFilterProps, Searcher } from './common.repositories'
+import { SearchFilterProps } from './common.repositories'
 
 const Classes = database.classes
 async function create(payload: ClassProps): Promise<RepositoriesResultProps<string | null>> {
@@ -76,13 +76,34 @@ async function search({
 }: SearchFilterProps<SearchClassParamsProps>): Promise<
   RepositoriesResultProps<PagingDataProps<ClassProps> | null>
 > {
-  console.log('repo:class', filter)
+  //console.log('repo:class', filter)
+  const fields = {
+    description: 0,
+  }
   try {
-    const result = await Searcher<SearchClassParamsProps>(Classes, filter, page, pageSize)
+    const currentPage = (page - 1) * pageSize
+
+    const query = await Classes.find(filter, { ...fields })
+      .sort({ createdAt: -1 })
+      .skip(currentPage)
+      .limit(pageSize)
+    //console.log(query)
+    const totalCount = await Classes.find(filter).countDocuments()
+    let data = {} as PagingDataProps<ClassProps>
+    if (query && totalCount) {
+      data = {
+        dataTable: query,
+        paging: {
+          page: page,
+          pageSize: pageSize,
+        },
+        totalCount: totalCount,
+      }
+    }
 
     return {
       ok: true,
-      data: result.data,
+      data,
     }
   } catch (error) {
     throw new Error(`repositories-class:Get error: ${error}`)

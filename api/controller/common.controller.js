@@ -54,7 +54,11 @@ function Mailer(req, res) {
         //const result = await sendEmailService({ to: 'sieunhankiet@gmail.com', subject: 'Test thoi', body: 'No body' })
         //const result = await transporter({...req.body, from: 'truongpham2412.dev@gmail.com'})
         try {
-            yield (0, mailer_1.sendEmailService)({ to: 'sieunhankiet@gmail.com', subject: 'Hi Dat', body: 'Toi chi muon test mail thoi' });
+            yield (0, mailer_1.sendEmailService)({
+                to: 'sieunhankiet@gmail.com',
+                subject: 'Hi Dat',
+                body: 'Toi chi muon test mail thoi',
+            });
             return (0, response_handler_1.sendRes)({
                 res: res,
                 code: common_1.CODE.OK,
@@ -84,7 +88,7 @@ function SingleUpload(req, res) {
                 });
             }
             const fileName = req.file.filename;
-            const imageUrl = `http://${req.headers.host}/api/file/${fileName}`;
+            const imageUrl = `https://minamvp.click/api/file/${fileName}`;
             return (0, response_handler_1.sendRes)({
                 res: res,
                 code: common_1.CODE.CREATED,
@@ -97,11 +101,11 @@ function SingleUpload(req, res) {
 function getImageByName(req, res) {
     const imageName = req.params.imageName;
     const imagePath = path_1.default.join(__dirname, '..', 'uploads', imageName);
-    console.log(imagePath);
+    //console.log(imagePath)
     res.sendFile(imagePath);
 }
 exports.CommonController = {
     SingleUpload,
     getImageByName,
-    Mailer
+    Mailer,
 };

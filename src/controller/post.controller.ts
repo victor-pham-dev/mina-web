@@ -172,10 +172,35 @@ async function search(req: Request, res: Response) {
   }
 }
 
+async function getRelated(req: Request, res: Response) {
+  const currentId = req.query.currentId as string
+  const type = req.query.type as string
+  try {
+    const result = await PostRepositories.getRelated(currentId, type)
+    if (result.ok) {
+      return sendRes<PostProps[]>({
+        res,
+        code: CODE.OK,
+        msg: MSG.OK,
+        data: result.data,
+      })
+    }
+    return sendRes<null>({
+      res,
+      code: CODE.NOT_FOUND,
+      msg: result.msg,
+      data: null,
+    })
+  } catch (error) {
+    throw new Error(`class: delete error: ${error}`)
+  }
+}
+
 export const PostController = {
   create,
   // update,
   markDelete,
   getOne,
   search,
+  getRelated,
 }

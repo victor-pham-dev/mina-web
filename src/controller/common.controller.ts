@@ -52,7 +52,11 @@ async function Mailer(req: RequestCustoms<SendMailProps>, res: Response) {
   //const result = await transporter({...req.body, from: 'truongpham2412.dev@gmail.com'})
 
   try {
-    await sendEmailService({ to: 'sieunhankiet@gmail.com', subject: 'Hi Dat', body: 'Toi chi muon test mail thoi' })
+    await sendEmailService({
+      to: 'sieunhankiet@gmail.com',
+      subject: 'Hi Dat',
+      body: 'Toi chi muon test mail thoi',
+    })
     return sendRes<null>({
       res: res,
       code: CODE.OK,
@@ -67,7 +71,6 @@ async function Mailer(req: RequestCustoms<SendMailProps>, res: Response) {
       data: error,
     })
   }
-
 }
 
 async function SingleUpload(req: Request, res: Response) {
@@ -81,7 +84,7 @@ async function SingleUpload(req: Request, res: Response) {
       })
     }
     const fileName = req.file.filename
-    const imageUrl = `http://${req.headers.host}/api/file/${fileName}`
+    const imageUrl = `https://minamvp.click/api/file/${fileName}`
     return sendRes({
       res: res,
       code: CODE.CREATED,
@@ -94,12 +97,12 @@ async function SingleUpload(req: Request, res: Response) {
 function getImageByName(req: Request, res: Response) {
   const imageName = req.params.imageName as string
   const imagePath = path.join(__dirname, '..', 'uploads', imageName)
-  console.log(imagePath)
+  //console.log(imagePath)
   res.sendFile(imagePath)
 }
 
 export const CommonController = {
   SingleUpload,
   getImageByName,
-  Mailer
+  Mailer,
 }

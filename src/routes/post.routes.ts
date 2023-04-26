@@ -7,6 +7,7 @@ export function PostRoutes(app: Express) {
   router.get('/search', PostController.search)
   router.get('/id=:_id', PostController.getOne)
   router.post('/', adminAuth, PostController.create)
+  router.get('/related', PostController.getRelated)
   // router.patch('/', adminAuth, PostController.update)
   router.delete('/id=:id', adminAuth, PostController.markDelete)
 
